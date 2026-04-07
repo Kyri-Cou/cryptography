@@ -69,6 +69,32 @@ a:hover { text-decoration: underline; }
 }
 .site-header nav a { margin-left: 1rem; }
 
+/* YouTube channel badge in the nav. Solid red pill so it reads as the
+   "watch related content" affordance rather than another internal route. */
+.site-header nav a.yt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: #ff0000;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+.site-header nav a.yt-badge:hover {
+  text-decoration: none;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.site-header nav a.yt-badge svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: #ffffff;
+}
+
 main {
   max-width: 960px;
   margin: 0 auto;

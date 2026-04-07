@@ -1,10 +1,14 @@
 # Cryptography Visualisations
 
+[![YouTube Channel](https://img.shields.io/badge/YouTube-Related%20content-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg)
+
 Interactive, browser-based visualisations of classical and modern cryptographic
 functions. Built as a static site with [Vite](https://vitejs.dev/) and deployed
 to GitHub Pages.
 
 **Live site:** https://kyri-cou.github.io/cryptography/
+
+**Companion videos:** https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg
 
 ## Pages
 
