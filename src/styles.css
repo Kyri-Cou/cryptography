@@ -1,0 +1,303 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Cryptography Course — shared stylesheet.
+   Palette mirrors theme.py so the website matches the animations.
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --c-bg:      #0d1117;
+  --c-panel:   #161b22;
+  --c-border:  #30363d;
+
+  /* Typography */
+  --c-text:    #e6edf3;
+  --c-dim:     #7d8590;
+  --c-heading: #f0c040;
+  --c-sub:     #79c0ff;
+
+  /* Cipher semantics */
+  --c-plain:   #3fb950;
+  --c-cipher:  #ff7b72;
+  --c-key:     #d2a8ff;
+  --c-algo:    #79c0ff;
+
+  /* Validation */
+  --c-success: #3fb950;
+  --c-warn:    #d29922;
+  --c-error:   #f85149;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "Fira Code", Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--c-sub);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+.site-header {
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-panel);
+}
+.site-header .inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.site-header h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--c-heading);
+  letter-spacing: 0.02em;
+}
+.site-header nav a { margin-left: 1rem; }
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+h1.page-title {
+  color: var(--c-heading);
+  font-size: 2rem;
+  margin: 0 0 0.5rem;
+}
+.subtitle {
+  color: var(--c-dim);
+  margin: 0 0 2rem;
+}
+
+h2 {
+  color: var(--c-sub);
+  border-bottom: 1px solid var(--c-border);
+  padding-bottom: 0.4rem;
+  margin-top: 2.5rem;
+}
+
+.panel {
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+}
+
+/* ── Cipher index cards ─────────────────────────────────────────────────── */
+.cipher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.cipher-card {
+  display: block;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  color: inherit;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+.cipher-card:hover {
+  border-color: var(--c-sub);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+.cipher-card h3 {
+  margin: 0 0 0.4rem;
+  color: var(--c-heading);
+}
+.cipher-card p {
+  margin: 0;
+  color: var(--c-dim);
+  font-size: 0.92rem;
+}
+
+/* ── Form controls ──────────────────────────────────────────────────────── */
+label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--c-dim);
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+input[type="text"], textarea {
+  width: 100%;
+  background: var(--c-bg);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 0.65rem 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  resize: vertical;
+}
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--c-sub);
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--c-key);
+}
+
+button {
+  background: var(--c-panel);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 0.55rem 1rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+button:hover { border-color: var(--c-sub); }
+button.primary {
+  background: var(--c-sub);
+  color: var(--c-bg);
+  border-color: var(--c-sub);
+  font-weight: 600;
+}
+button.primary:hover { filter: brightness(1.1); }
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 720px) {
+  .controls { grid-template-columns: 2fr 1fr; }
+}
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.shift-display {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  color: var(--c-key);
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+/* ── Caesar visualisation ───────────────────────────────────────────────── */
+.viz {
+  margin-top: 1.5rem;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  overflow-x: auto;
+}
+
+.alphabet-track {
+  display: grid;
+  grid-template-columns: repeat(26, minmax(28px, 1fr));
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  text-align: center;
+  min-width: 720px;
+}
+.alphabet-track .cell {
+  padding: 0.4rem 0;
+  border-radius: 4px;
+  border: 1px solid var(--c-border);
+  background: var(--c-bg);
+}
+.alphabet-track.plain .cell    { color: var(--c-plain); }
+.alphabet-track.cipher .cell   { color: var(--c-cipher); }
+.alphabet-track .cell.highlight {
+  background: rgba(121, 192, 255, 0.12);
+  border-color: var(--c-algo);
+}
+.track-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-dim);
+  margin: 1rem 0 0.4rem;
+}
+
+.io-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+@media (min-width: 720px) {
+  .io-grid { grid-template-columns: 1fr 1fr; }
+}
+.io-block .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-dim);
+  margin-bottom: 0.35rem;
+}
+.io-block .value {
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  min-height: 2.6rem;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.io-block.plain  .value { color: var(--c-plain); }
+.io-block.cipher .value { color: var(--c-cipher); }
+
+/* Per-character mapping table */
+.mapping {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--font-mono);
+}
+.mapping .pair {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.55rem;
+  background: var(--c-bg);
+  min-width: 2.4rem;
+}
+.mapping .pair .from { color: var(--c-plain); }
+.mapping .pair .arrow { color: var(--c-dim); font-size: 0.75rem; }
+.mapping .pair .to   { color: var(--c-cipher); }
+.mapping .pair.passthrough { opacity: 0.55; }
+
+footer.site-footer {
+  border-top: 1px solid var(--c-border);
+  color: var(--c-dim);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 1.25rem 1rem;
+}
