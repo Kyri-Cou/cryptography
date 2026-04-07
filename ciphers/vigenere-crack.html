@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Cracking Vigenère · Cryptography Visualisations</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <a href="./caesar.html">Caesar</a>
+          <a href="./caesar-crack.html">Crack Caesar</a>
+          <a href="./vigenere.html">Vigenère</a>
+          <a href="./vigenere-crack.html">Crack Vigenère</a>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Cracking the Vigenère Cipher</h1>
+      <p class="subtitle">
+        Vigenère stayed unbreakable for three centuries until Friedrich Kasiski
+        spotted that repeated plaintext + repeating key produces repeated
+        ciphertext. Find the period, then brute-force each Caesar slice.
+      </p>
+
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <label for="ciphertext">Ciphertext</label>
+            <textarea id="ciphertext" rows="5" spellcheck="false"></textarea>
+          </div>
+          <div>
+            <label>Actions</label>
+            <div class="control-row">
+              <button id="crack-btn" class="primary">Crack</button>
+            </div>
+            <div class="control-row" style="margin-top: 0.75rem;">
+              <button id="sample-btn">Reload sample</button>
+            </div>
+            <p class="hint" id="sample-hint"></p>
+          </div>
+        </div>
+      </section>
+
+      <h2>Step 1 · Kasiski examination</h2>
+      <p class="subtitle">
+        Trigrams (and longer) that repeat in the ciphertext almost certainly
+        come from the same plaintext encrypted by the same slice of the key.
+        Their distance apart is therefore a multiple of the key length.
+      </p>
+      <div id="repeats" class="repeats"></div>
+
+      <h2>Step 2 · Score candidate key lengths</h2>
+      <p class="subtitle">
+        For each candidate length <code>L</code>, count how many of those
+        distances are divisible by <code>L</code>. The true key length wins by
+        a wide margin. Click any row to crack with that length.
+      </p>
+      <div id="keylens" class="candidates"></div>
+
+      <h2>Step 3 · Brute force each Caesar slice</h2>
+      <p class="subtitle">
+        Split the ciphertext into <code id="active-len-label">L</code>
+        cosets — every <code id="active-len-label-2">L</code>-th letter shares
+        a single key letter, so each coset is a Caesar cipher. Try all 26
+        shifts per coset and pick the most English-looking one.
+      </p>
+      <div id="cosets" class="cosets"></div>
+
+      <h2>Recovered key &amp; plaintext</h2>
+      <div class="panel best-guess">
+        <div class="best-row">
+          <div>
+            <div class="label">Recovered key</div>
+            <div id="best-key" class="best-key">–</div>
+          </div>
+          <div>
+            <div class="label">Key length</div>
+            <div id="best-len" class="best-score">–</div>
+          </div>
+        </div>
+        <div class="label" style="margin-top: 1rem;">Recovered plaintext</div>
+        <div id="best-plaintext" class="value plain-value">&nbsp;</div>
+      </div>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          Kasiski's insight (1863) is purely structural. If the same three
+          plaintext letters appear twice and happen to line up with the same
+          three key letters, the ciphertext repeats. The distance between
+          those repeats is therefore some integer multiple of the key length
+          <code>L</code>. Collect enough such distances and <code>L</code>
+          falls out as their greatest common divisor.
+        </p>
+        <p>
+          Once you know <code>L</code>, the cipher collapses. The 1st, the
+          (L+1)th, the (2L+1)th… letters of the ciphertext are all encrypted
+          with the <em>same</em> key letter — i.e. with a single Caesar shift.
+          So you peel the ciphertext into <code>L</code> independent Caesar
+          ciphers (called <em>cosets</em>) and brute-force each one against
+          English letter frequencies, exactly like the
+          <a href="./caesar-crack.html">Caesar cracker</a>.
+          Stitch the winning shifts back together and you have the key.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          Friedman's later <em>index of coincidence</em> can confirm
+          <code>L</code> statistically, but for any reasonably long message
+          plain Kasiski + chi-squared is enough to read everything in
+          milliseconds.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+    <script type="module" src="/src/vigenere-crack.js"></script>
+  </body>
+</html>

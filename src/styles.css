@@ -383,6 +383,83 @@ button.primary:hover { filter: brightness(1.1); }
   font-weight: 600;
 }
 
+/* ── Vigenère crack page ────────────────────────────────────────────────── */
+.hint {
+  color: var(--c-dim);
+  font-size: 0.82rem;
+  margin: 0.75rem 0 0;
+}
+
+.repeats {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.repeat-row {
+  display: grid;
+  grid-template-columns: 5rem 1fr 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0.85rem;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+.repeat-seq {
+  color: var(--c-cipher);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.repeat-positions { color: var(--c-dim); }
+.repeat-distances { color: var(--c-key); text-align: right; }
+
+.cosets {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.coset-row {
+  display: grid;
+  grid-template-columns: 3rem 6rem 1.5rem 2rem 5rem 1fr;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.5rem 0.85rem;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+}
+.coset-idx    { color: var(--c-dim); }
+.coset-len    { color: var(--c-dim); }
+.coset-arrow  { color: var(--c-dim); text-align: center; }
+.coset-letter {
+  color: var(--c-key);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+}
+.coset-shift  { color: var(--c-dim); }
+.coset-score  { color: var(--c-sub); text-align: right; }
+
+.empty {
+  color: var(--c-dim);
+  font-size: 0.88rem;
+  font-style: italic;
+  margin: 0.5rem 0 0;
+}
+
+@media (max-width: 600px) {
+  .repeat-row    { grid-template-columns: 4rem 1fr; }
+  .repeat-distances { grid-column: 1 / -1; text-align: left; }
+  .coset-row     { grid-template-columns: 2.5rem 5rem 1rem 2rem 1fr; font-size: 0.8rem; }
+  .coset-score   { display: none; }
+}
+
 /* ── Caesar brute-force crack page ──────────────────────────────────────── */
 .best-guess .best-row {
   display: grid;

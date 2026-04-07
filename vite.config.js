@@ -14,6 +14,7 @@ export default defineConfig({
         caesar: resolve(__dirname, 'ciphers/caesar.html'),
         caesarCrack: resolve(__dirname, 'ciphers/caesar-crack.html'),
         vigenere: resolve(__dirname, 'ciphers/vigenere.html'),
+        vigenereCrack: resolve(__dirname, 'ciphers/vigenere-crack.html'),
       },
     },
   },
