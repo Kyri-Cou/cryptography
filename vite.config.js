@@ -13,6 +13,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         caesar: resolve(__dirname, 'ciphers/caesar.html'),
         caesarCrack: resolve(__dirname, 'ciphers/caesar-crack.html'),
+        vigenere: resolve(__dirname, 'ciphers/vigenere.html'),
       },
     },
   },

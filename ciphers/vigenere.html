@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Caesar Cipher · Cryptography Visualisations</title>
+    <title>Vigenère Cipher · Cryptography Visualisations</title>
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body>
@@ -27,37 +27,26 @@
     </header>
 
     <main>
-      <h1 class="page-title">Caesar Cipher</h1>
+      <h1 class="page-title">Vigenère Cipher</h1>
       <p class="subtitle">
-        Each letter of the plaintext is replaced by the letter a fixed number of
-        positions further down the alphabet. Tweak the shift and watch the
-        alphabets re-align.
+        A repeating keyword turns the Caesar cipher into a polyalphabetic one.
+        Each plaintext letter is shifted by the next letter of the key.
       </p>
 
       <section class="panel">
         <div class="controls">
           <div>
             <label for="plaintext">Plaintext</label>
-            <textarea id="plaintext" rows="3" spellcheck="false">The quick brown fox jumps over the lazy dog</textarea>
+            <textarea id="plaintext" rows="3" spellcheck="false">Attack at dawn</textarea>
           </div>
           <div>
-            <label for="shift">Shift (key)</label>
-            <div class="control-row">
-              <input id="shift" type="range" min="0" max="25" value="3" />
-              <span id="shift-display" class="shift-display">3</span>
-            </div>
+            <label for="keyword">Key</label>
+            <input id="keyword" type="text" value="LEMON" spellcheck="false" autocomplete="off" />
             <div class="control-row" style="margin-top: 1rem;">
               <button id="decrypt-toggle">Switch to decrypt</button>
             </div>
           </div>
         </div>
-      </section>
-
-      <section class="viz">
-        <div class="track-label">Plaintext alphabet</div>
-        <div id="track-plain" class="alphabet-track plain"></div>
-        <div class="track-label">Cipher alphabet (shifted by <span id="track-shift">3</span>)</div>
-        <div id="track-cipher" class="alphabet-track cipher"></div>
       </section>
 
       <div class="io-grid">
@@ -73,24 +62,34 @@
 
       <h2>Per-character mapping</h2>
       <p class="subtitle">
-        Hover or scan: each tile shows where one input letter lands. Non-letters
-        pass through unchanged.
+        The key repeats across the message, skipping non-letters. Each tile
+        shows the input letter, the key letter that shifts it, and the result.
       </p>
-      <div id="mapping" class="mapping"></div>
+      <div id="mapping" class="vig-mapping"></div>
+
+      <h2>Vigenère square</h2>
+      <p class="subtitle">
+        The classic <em>tabula recta</em>. To encrypt, find the row given by
+        the key letter and the column given by the plaintext letter — the
+        intersection is the ciphertext. Hover a row or column to highlight it.
+      </p>
+      <div class="viz">
+        <div id="tabula" class="tabula"></div>
+      </div>
 
       <h2>How it works</h2>
       <div class="panel">
         <p>
-          The Caesar cipher is a <em>monoalphabetic substitution cipher</em>.
-          For shift <code>k</code>, every plaintext letter <code>p</code>
-          (numbered 0–25) becomes
-          <code>c = (p + k) mod 26</code>. Decryption is the same operation
-          with <code>-k</code>.
+          For plaintext letter <code>p</code> and key letter <code>k</code>
+          (each numbered 0–25), the ciphertext letter is
+          <code>c = (p + k) mod 26</code>. Decryption flips the sign:
+          <code>p = (c − k) mod 26</code>. The key cycles to match the message
+          length, so a 5-letter key produces 5 interleaved Caesar ciphers.
         </p>
         <p style="color: var(--c-dim); margin-bottom: 0;">
-          Because there are only 26 possible keys, the cipher is trivially
-          broken by brute force — but it remains a perfect introduction to the
-          shape of every cipher that follows.
+          For three centuries Vigenère was reputed to be unbreakable —
+          <em>le chiffre indéchiffrable</em>. Repeating the key is exactly what
+          eventually betrays it, but that is a story for another page.
         </p>
       </div>
     </main>
@@ -99,6 +98,6 @@
       Built with Vite · Palette from <code>theme.py</code>
     </footer>
 
-    <script type="module" src="/src/caesar.js"></script>
+    <script type="module" src="/src/vigenere.js"></script>
   </body>
 </html>

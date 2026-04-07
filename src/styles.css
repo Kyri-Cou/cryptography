@@ -320,6 +320,69 @@ button.primary:hover { filter: brightness(1.1); }
 .mapping .pair .to   { color: var(--c-cipher); }
 .mapping .pair.passthrough { opacity: 0.55; }
 
+/* ── Vigenère cipher page ───────────────────────────────────────────────── */
+.vig-mapping {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--font-mono);
+}
+.vig-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.55rem;
+  background: var(--c-bg);
+  min-width: 2.4rem;
+}
+.vig-col .from  { color: var(--c-plain); }
+.vig-col .key   { color: var(--c-key); font-size: 0.85rem; }
+.vig-col .arrow { color: var(--c-dim); font-size: 0.75rem; }
+.vig-col .to    { color: var(--c-cipher); }
+.vig-col.passthrough { opacity: 0.55; }
+
+.tabula {
+  display: grid;
+  grid-template-columns: repeat(27, minmax(22px, 1fr));
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-align: center;
+  min-width: 720px;
+}
+.tab-cell {
+  padding: 0.3rem 0;
+  border-radius: 3px;
+  background: var(--c-bg);
+  border: 1px solid transparent;
+  color: var(--c-text);
+}
+.tab-corner { background: transparent; }
+.tab-col-head {
+  color: var(--c-plain);
+  font-weight: 600;
+  border-bottom: 1px solid var(--c-border);
+}
+.tab-row-head {
+  color: var(--c-key);
+  font-weight: 600;
+  border-right: 1px solid var(--c-border);
+}
+.tab-cell.hl-row,
+.tab-cell.hl-col {
+  background: rgba(210, 168, 255, 0.18);
+  border-color: var(--c-key);
+}
+.tab-cell.hl-cell {
+  background: rgba(255, 123, 114, 0.22);
+  border-color: var(--c-cipher);
+  color: var(--c-cipher);
+  font-weight: 600;
+}
+
 /* ── Caesar brute-force crack page ──────────────────────────────────────── */
 .best-guess .best-row {
   display: grid;
