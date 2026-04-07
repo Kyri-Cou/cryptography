@@ -182,6 +182,9 @@ function crackForLength(cipherClean, L) {
     let coset = '';
     for (let j = i; j < cipherClean.length; j += L) coset += cipherClean[j];
 
+    // Brute-force all 26 shifts and keep every score so the UI can show the
+    // full spectrum, not just the winner.
+    const allScores = new Array(26);
     let bestK = 0;
     let bestScore = Infinity;
     for (let k = 0; k < 26; k++) {
@@ -190,10 +193,11 @@ function crackForLength(cipherClean, L) {
         decrypted += ALPHABET[(letterIdx(c) - k + 26) % 26];
       }
       const s = chiSquaredEnglish(decrypted);
+      allScores[k] = s;
       if (s < bestScore) { bestScore = s; bestK = k; }
     }
     key += ALPHABET[bestK];
-    positions.push({ pos: i, cosetLen: coset.length, bestK, bestScore });
+    positions.push({ pos: i, coset, cosetLen: coset.length, bestK, bestScore, allScores });
   }
   return { key, positions };
 }
@@ -286,12 +290,16 @@ function renderKeyLengths(scores, activeL) {
 function renderCosets(cracked) {
   els.cosets.innerHTML = '';
   for (const p of cracked.positions) {
-    const row = document.createElement('div');
-    row.className = 'coset-row';
+    const card = document.createElement('div');
+    card.className = 'coset-card';
+
+    // ── Header: position, coset preview, winning letter, χ² ──
+    const header = document.createElement('div');
+    header.className = 'coset-header';
 
     const idx = document.createElement('span');
     idx.className = 'coset-idx';
-    idx.textContent = `#${p.pos}`;
+    idx.textContent = `coset #${p.pos}`;
 
     const len = document.createElement('span');
     len.className = 'coset-len';
@@ -307,14 +315,60 @@ function renderCosets(cracked) {
 
     const shift = document.createElement('span');
     shift.className = 'coset-shift';
-    shift.textContent = `(shift ${p.bestK})`;
+    shift.textContent = `shift ${p.bestK} · χ² ${p.bestScore.toFixed(1)}`;
 
-    const score = document.createElement('span');
-    score.className = 'coset-score';
-    score.textContent = `χ² ${p.bestScore.toFixed(1)}`;
+    header.append(idx, len, arrow, letter, shift);
+    card.appendChild(header);
 
-    row.append(idx, len, arrow, letter, shift, score);
-    els.cosets.appendChild(row);
+    // ── Raw coset letters ──
+    const rawLabel = document.createElement('div');
+    rawLabel.className = 'coset-sublabel';
+    rawLabel.textContent = 'every Lth letter from the ciphertext';
+    const raw = document.createElement('div');
+    raw.className = 'coset-raw';
+    raw.textContent = p.coset;
+    card.append(rawLabel, raw);
+
+    // ── Spectrum: all 26 shift scores ──
+    const specLabel = document.createElement('div');
+    specLabel.className = 'coset-sublabel';
+    specLabel.textContent = 'χ² for each candidate Caesar shift (lower is more English)';
+    card.appendChild(specLabel);
+
+    const spectrum = document.createElement('div');
+    spectrum.className = 'coset-spectrum';
+
+    // Normalise within this coset so the colour ramp uses the full range.
+    const finite = p.allScores.filter(isFinite);
+    const minS = Math.min(...finite);
+    const maxS = Math.max(...finite);
+    const range = maxS - minS || 1;
+
+    for (let k = 0; k < 26; k++) {
+      const s = p.allScores[k];
+      const norm = isFinite(s) ? (s - minS) / range : 1; // 0 = best, 1 = worst
+      // Green (best, hue 130) → red (worst, hue 0). Saturation/lightness fixed.
+      const hue = 130 * (1 - norm);
+      const cell = document.createElement('div');
+      cell.className = 'spec-cell';
+      if (k === p.bestK) cell.classList.add('best');
+      cell.style.background = `hsl(${hue}, 55%, ${k === p.bestK ? 40 : 22}%)`;
+
+      const lt = document.createElement('span');
+      lt.className = 'spec-letter';
+      lt.textContent = ALPHABET[k];
+
+      const sc = document.createElement('span');
+      sc.className = 'spec-score';
+      sc.textContent = isFinite(s) ? s.toFixed(0) : '∞';
+
+      cell.append(lt, sc);
+      cell.title = `Shift ${k} (key letter ${ALPHABET[k]}) · χ² = ${isFinite(s) ? s.toFixed(2) : '∞'}`;
+      spectrum.appendChild(cell);
+    }
+    card.appendChild(spectrum);
+
+    els.cosets.appendChild(card);
   }
 }
 

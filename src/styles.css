@@ -420,31 +420,79 @@ button.primary:hover { filter: brightness(1.1); }
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.75rem;
 }
-.coset-row {
-  display: grid;
-  grid-template-columns: 3rem 6rem 1.5rem 2rem 5rem 1fr;
-  gap: 0.6rem;
-  align-items: center;
-  padding: 0.5rem 0.85rem;
+.coset-card {
   background: var(--c-panel);
   border: 1px solid var(--c-border);
-  border-radius: 6px;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
   font-family: var(--font-mono);
-  font-size: 0.88rem;
 }
-.coset-idx    { color: var(--c-dim); }
+.coset-header {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.88rem;
+  flex-wrap: wrap;
+}
+.coset-idx    { color: var(--c-sub); font-weight: 600; }
 .coset-len    { color: var(--c-dim); }
-.coset-arrow  { color: var(--c-dim); text-align: center; }
+.coset-arrow  { color: var(--c-dim); }
 .coset-letter {
   color: var(--c-key);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  text-align: center;
 }
-.coset-shift  { color: var(--c-dim); }
-.coset-score  { color: var(--c-sub); text-align: right; }
+.coset-shift  { color: var(--c-dim); margin-left: auto; }
+
+.coset-sublabel {
+  margin-top: 0.7rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-dim);
+}
+.coset-raw {
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  color: var(--c-cipher);
+  font-size: 0.82rem;
+  word-break: break-all;
+  line-height: 1.5;
+}
+.coset-spectrum {
+  margin-top: 0.35rem;
+  display: grid;
+  grid-template-columns: repeat(26, minmax(22px, 1fr));
+  gap: 2px;
+}
+.spec-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #ffffff;
+  line-height: 1.1;
+}
+.spec-cell.best {
+  border-color: var(--c-key);
+  box-shadow: 0 0 0 1px var(--c-key);
+}
+.spec-letter {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.spec-score {
+  font-size: 0.6rem;
+  opacity: 0.8;
+}
 
 .empty {
   color: var(--c-dim);
@@ -456,8 +504,8 @@ button.primary:hover { filter: brightness(1.1); }
 @media (max-width: 600px) {
   .repeat-row    { grid-template-columns: 4rem 1fr; }
   .repeat-distances { grid-column: 1 / -1; text-align: left; }
-  .coset-row     { grid-template-columns: 2.5rem 5rem 1rem 2rem 1fr; font-size: 0.8rem; }
-  .coset-score   { display: none; }
+  .coset-spectrum { grid-template-columns: repeat(13, 1fr); }
+  .spec-score    { display: none; }
 }
 
 /* ── Caesar brute-force crack page ──────────────────────────────────────── */
