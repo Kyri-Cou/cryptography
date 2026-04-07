@@ -320,6 +320,106 @@ button.primary:hover { filter: brightness(1.1); }
 .mapping .pair .to   { color: var(--c-cipher); }
 .mapping .pair.passthrough { opacity: 0.55; }
 
+/* ── Caesar brute-force crack page ──────────────────────────────────────── */
+.best-guess .best-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.best-guess .best-key {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  color: var(--c-key);
+}
+.best-guess .best-score {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  color: var(--c-sub);
+}
+.best-guess .plain-value {
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  min-height: 2.6rem;
+  word-break: break-word;
+  white-space: pre-wrap;
+  color: var(--c-plain);
+}
+
+.candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 1rem;
+}
+.candidate {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 4rem;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.55rem 0.85rem;
+  text-align: left;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  color: var(--c-text);
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+.candidate:hover {
+  border-color: var(--c-sub);
+  transform: translateX(2px);
+}
+.candidate.top {
+  border-color: var(--c-plain);
+  background: rgba(63, 185, 80, 0.08);
+}
+.candidate .cand-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: rgba(121, 192, 255, 0.10);
+  pointer-events: none;
+  z-index: 0;
+}
+.candidate.top .cand-bar {
+  background: rgba(63, 185, 80, 0.18);
+}
+.candidate .cand-key,
+.candidate .cand-text,
+.candidate .cand-score {
+  position: relative;
+  z-index: 1;
+}
+.candidate .cand-key {
+  color: var(--c-key);
+}
+.candidate .cand-text {
+  color: var(--c-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.candidate.top .cand-text {
+  color: var(--c-plain);
+}
+.candidate .cand-score {
+  color: var(--c-dim);
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .best-guess .best-row { grid-template-columns: 1fr; gap: 0.75rem; }
+  .candidate { grid-template-columns: 3rem 1fr 3.5rem; font-size: 0.82rem; }
+}
+
 footer.site-footer {
   border-top: 1px solid var(--c-border);
   color: var(--c-dim);
