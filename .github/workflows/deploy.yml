@@ -14,6 +14,13 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# Force every JavaScript-based action — including transitive ones pinned
+# inside other actions (e.g. the upload-artifact SHA bundled with
+# upload-pages-artifact@v4) — to run on Node 24, silencing the Node 20
+# deprecation warnings until upstream actions ship updated pins.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build:
     runs-on: ubuntu-latest
