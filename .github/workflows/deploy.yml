@@ -6,23 +6,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
-# Force every JavaScript-based action — including transitive ones pinned
-# inside other actions (e.g. the upload-artifact SHA bundled with
-# upload-pages-artifact@v4) — to run on Node 24, silencing the Node 20
-# deprecation warnings until upstream actions ship updated pins.
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -36,18 +27,20 @@ jobs:
 
       - run: npm run build
 
-      - uses: actions/configure-pages@v6
-
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v5
+      # Publish the built site by force-pushing dist/ to the gh-pages branch.
+      # Doing this with plain git (rather than the actions/*-pages helpers)
+      # avoids every transitive Node 20 dependency they currently pin, so the
+      # workflow runs annotation-free.
+      - name: Publish to gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          touch dist/.nojekyll
+          cd dist
+          git init -q -b gh-pages
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
