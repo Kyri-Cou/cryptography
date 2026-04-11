@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/cryptography/favicon.png" />
+    <title>Vigenère Cipher · Cryptography Visualisations</title>
+    <script type="module" crossorigin src="/cryptography/assets/vigenere-CLHVg6N-.js"></script>
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/nav-DgkIvloo.js">
+    <link rel="stylesheet" crossorigin href="/cryptography/assets/nav-IuHXoizY.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Vigenère Cipher</h1>
+      <p class="subtitle">
+        A repeating keyword turns the Caesar cipher into a polyalphabetic one.
+        Each plaintext letter is shifted by the next letter of the key.
+      </p>
+
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <label for="plaintext">Plaintext</label>
+            <textarea id="plaintext" rows="3" spellcheck="false">Attack at dawn</textarea>
+          </div>
+          <div>
+            <label for="keyword">Key</label>
+            <input id="keyword" type="text" value="LEMON" spellcheck="false" autocomplete="off" />
+            <div class="control-row" style="margin-top: 1rem;">
+              <button id="decrypt-toggle">Switch to decrypt</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="io-grid">
+        <div class="io-block plain">
+          <div class="label" id="input-label">Plaintext</div>
+          <div id="input-display" class="value"></div>
+        </div>
+        <div class="io-block cipher">
+          <div class="label" id="output-label">Ciphertext</div>
+          <div id="output-display" class="value"></div>
+        </div>
+      </div>
+
+      <h2>Per-character mapping</h2>
+      <p class="subtitle">
+        The key repeats across the message, skipping non-letters. Each tile
+        shows the input letter, the key letter that shifts it, and the result.
+      </p>
+      <div id="mapping" class="vig-mapping"></div>
+
+      <h2>Vigenère square</h2>
+      <p class="subtitle">
+        The classic <em>tabula recta</em>. To encrypt, find the row given by
+        the key letter and the column given by the plaintext letter — the
+        intersection is the ciphertext. Hover a row or column to highlight it.
+      </p>
+      <div class="viz">
+        <div id="tabula" class="tabula"></div>
+      </div>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          For plaintext letter <code>p</code> and key letter <code>k</code>
+          (each numbered 0–25), the ciphertext letter is
+          <code>c = (p + k) mod 26</code>. Decryption flips the sign:
+          <code>p = (c − k) mod 26</code>. The key cycles to match the message
+          length, so a 5-letter key produces 5 interleaved Caesar ciphers.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          For three centuries Vigenère was reputed to be unbreakable —
+          <em>le chiffre indéchiffrable</em>. Repeating the key is exactly what
+          eventually betrays it, but that is a story for another page.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+  </body>
+</html>

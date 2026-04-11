@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/cryptography/favicon.png" />
+    <title>Caesar Cipher · Cryptography Visualisations</title>
+    <script type="module" crossorigin src="/cryptography/assets/caesar-Djxlv01y.js"></script>
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/nav-DgkIvloo.js">
+    <link rel="stylesheet" crossorigin href="/cryptography/assets/nav-IuHXoizY.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Caesar Cipher</h1>
+      <p class="subtitle">
+        Each letter of the plaintext is replaced by the letter a fixed number of
+        positions further down the alphabet. Tweak the shift and watch the
+        alphabets re-align.
+      </p>
+
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <label for="plaintext">Plaintext</label>
+            <textarea id="plaintext" rows="3" spellcheck="false">The quick brown fox jumps over the lazy dog</textarea>
+          </div>
+          <div>
+            <label for="shift">Shift (key)</label>
+            <div class="control-row">
+              <input id="shift" type="range" min="0" max="25" value="3" />
+              <span id="shift-display" class="shift-display">3</span>
+            </div>
+            <div class="control-row" style="margin-top: 1rem;">
+              <button id="decrypt-toggle">Switch to decrypt</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="viz">
+        <div class="track-label">Plaintext alphabet</div>
+        <div id="track-plain" class="alphabet-track plain"></div>
+        <div class="track-label">Cipher alphabet (shifted by <span id="track-shift">3</span>)</div>
+        <div id="track-cipher" class="alphabet-track cipher"></div>
+      </section>
+
+      <div class="io-grid">
+        <div class="io-block plain">
+          <div class="label" id="input-label">Plaintext</div>
+          <div id="input-display" class="value"></div>
+        </div>
+        <div class="io-block cipher">
+          <div class="label" id="output-label">Ciphertext</div>
+          <div id="output-display" class="value"></div>
+        </div>
+      </div>
+
+      <h2>Per-character mapping</h2>
+      <p class="subtitle">
+        Hover or scan: each tile shows where one input letter lands. Non-letters
+        pass through unchanged.
+      </p>
+      <div id="mapping" class="mapping"></div>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          The Caesar cipher is a <em>monoalphabetic substitution cipher</em>.
+          For shift <code>k</code>, every plaintext letter <code>p</code>
+          (numbered 0–25) becomes
+          <code>c = (p + k) mod 26</code>. Decryption is the same operation
+          with <code>-k</code>.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          Because there are only 26 possible keys, the cipher is trivially
+          broken by brute force — but it remains a perfect introduction to the
+          shape of every cipher that follows.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+  </body>
+</html>
