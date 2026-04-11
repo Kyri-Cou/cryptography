@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Chi-squared Test · Cryptography Visualisations</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">The Chi-squared Test</h1>
+      <p class="subtitle">
+        A single number that says how close a piece of text is to English.
+        Lower is more English-like. It's the engine behind every
+        letter-frequency attack on this site.
+      </p>
+
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <label for="text">Text</label>
+            <textarea id="text" rows="4" spellcheck="false">Cryptography is the practice and study of techniques for secure communication. Modern cryptography sits at the intersection of mathematics, computer science, and electrical engineering, and it underpins almost everything we do online today.</textarea>
+          </div>
+          <div>
+            <label for="shift">Caesar shift (try it)</label>
+            <div class="control-row">
+              <input id="shift" type="range" min="0" max="25" value="0" />
+              <span id="shift-display" class="shift-display">0</span>
+            </div>
+            <p class="hint">
+              Slide to Caesar-encrypt the text live. Watch chi² spike for every
+              non-zero shift — that's why the crackers work.
+            </p>
+          </div>
+        </div>
+        <div class="label" style="margin-top: 1rem;">Analysed text</div>
+        <div id="shifted-text" class="value plain-value">&nbsp;</div>
+      </section>
+
+      <h2>Chi² score</h2>
+      <div class="panel chi-banner">
+        <div>
+          <div class="label">Total χ²</div>
+          <div id="chi-total" class="chi-total">0</div>
+          <div id="letter-count" class="hint"></div>
+        </div>
+        <div id="interpretation" class="interpretation"></div>
+      </div>
+
+      <h2>Observed vs expected distribution</h2>
+      <p class="subtitle">
+        The grey bars are the expected English frequencies; the green bars are
+        what we actually see in your text. The bigger the mismatch, the bigger
+        the chi² score.
+      </p>
+      <div class="panel">
+        <div id="dist-chart" class="dist-chart"></div>
+        <div class="dist-legend">
+          <span><span class="swatch expected"></span> Expected (English)</span>
+          <span><span class="swatch observed"></span> Observed (your text)</span>
+        </div>
+      </div>
+
+      <h2>Per-letter contributions</h2>
+      <p class="subtitle">
+        Sorted by how much each letter adds to the total. The biggest offenders
+        — letters that are wildly over- or under-represented — rise to the top.
+      </p>
+      <div id="contrib-table" class="contrib-table"></div>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          Pearson's <em>chi-squared</em> statistic compares observed counts
+          against what you'd expect under some hypothesis — here, "this text
+          is English". Given <code>N</code> letters in total, for each letter
+          of the alphabet we compute the expected count
+          <code>E = p · N</code>, where <code>p</code> is that letter's
+          standard English frequency (E ≈ 12.7 %, T ≈ 9.1 %, … Z ≈ 0.07 %).
+          The score is then the sum of squared, normalised differences:
+        </p>
+        <p style="text-align:center;">
+          <code>χ² = Σ (O − E)² / E</code>
+        </p>
+        <p>
+          Letters far from their expected counts dominate the sum thanks to the
+          squared term. The result stays small for anything that looks like
+          English and climbs rapidly as the distribution drifts. That's exactly
+          why it cracks Caesar and Vigenère so cleanly: among the 26 (or
+          <code>L</code>×26) candidate shifts, the correct key is almost
+          always the one with the lowest score.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          Rule of thumb: a few hundred letters of English score well under 30.
+          Random letters or a wrong-key decryption spike into the hundreds.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+    <script type="module" src="/src/chi-squared.js"></script>
+  </body>
+</html>

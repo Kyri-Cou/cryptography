@@ -2,6 +2,8 @@
 // Renders two alphabet tracks, an input/output panel, and a per-character
 // mapping grid that updates live as the user types or moves the shift slider.
 
+import './nav.js';
+
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const $ = (id) => document.getElementById(id);

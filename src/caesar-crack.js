@@ -2,6 +2,8 @@
 // Tries all 26 shifts, scores each candidate plaintext against expected
 // English letter frequencies via a chi-squared statistic, and ranks them.
 
+import './nav.js';
+
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 // English letter frequencies as percentages (sums ~100). Standard table from

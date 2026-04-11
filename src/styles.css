@@ -67,7 +67,63 @@ a:hover { text-decoration: underline; }
   color: var(--c-heading);
   letter-spacing: 0.02em;
 }
-.site-header nav a { margin-left: 1rem; }
+.site-header nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.site-header nav > a { /* no left-margin override needed now */ }
+
+/* Collapsible nav group — powered by <details>/<summary>, no JS required
+   for open/close state. src/nav.js only handles click-outside dismissal. */
+.nav-group {
+  position: relative;
+}
+.nav-group > summary {
+  list-style: none;
+  cursor: pointer;
+  color: var(--c-sub);
+  user-select: none;
+  padding: 0.15rem 0;
+}
+.nav-group > summary::-webkit-details-marker { display: none; }
+.nav-group > summary::after {
+  content: '▾';
+  display: inline-block;
+  margin-left: 0.25rem;
+  font-size: 0.75em;
+  opacity: 0.7;
+  transition: transform 120ms ease;
+}
+.nav-group[open] > summary::after { transform: rotate(180deg); }
+.nav-group > summary:hover { text-decoration: underline; }
+
+.nav-menu {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  min-width: 170px;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 0.3rem 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+.nav-menu a {
+  display: block;
+  padding: 0.5rem 0.95rem;
+  color: var(--c-text);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.nav-menu a:hover {
+  background: var(--c-bg);
+  text-decoration: none;
+  color: var(--c-sub);
+}
 
 /* YouTube channel badge in the nav. Solid red pill so it reads as the
    "watch related content" affordance rather than another internal route. */
@@ -606,6 +662,124 @@ button.primary:hover { filter: brightness(1.1); }
 @media (max-width: 600px) {
   .best-guess .best-row { grid-template-columns: 1fr; gap: 0.75rem; }
   .candidate { grid-template-columns: 3rem 1fr 3.5rem; font-size: 0.82rem; }
+}
+
+/* ── Chi-squared page ───────────────────────────────────────────────────── */
+.chi-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.chi-total {
+  font-family: var(--font-mono);
+  font-size: 3rem;
+  line-height: 1.1;
+  color: var(--c-key);
+}
+.interpretation {
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-border);
+  background: var(--c-bg);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--c-dim);
+}
+.interpretation.good { color: var(--c-success); border-color: var(--c-success); }
+.interpretation.ok   { color: var(--c-sub);     border-color: var(--c-sub); }
+.interpretation.warn { color: var(--c-warn);    border-color: var(--c-warn); }
+.interpretation.bad  { color: var(--c-error);   border-color: var(--c-error); }
+
+.dist-chart {
+  display: grid;
+  grid-template-columns: repeat(26, minmax(22px, 1fr));
+  gap: 4px;
+  align-items: end;
+  height: 220px;
+  padding-top: 0.5rem;
+}
+.dist-col {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.dist-bars {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  position: relative;
+}
+.dist-bar {
+  width: 45%;
+  min-height: 1px;
+  border-radius: 2px 2px 0 0;
+  transition: height 120ms ease;
+}
+.dist-bar.expected { background: rgba(125, 133, 144, 0.45); }
+.dist-bar.observed { background: var(--c-plain); }
+.dist-label {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--c-dim);
+  margin-top: 0.35rem;
+}
+
+.dist-legend {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.9rem;
+  font-size: 0.82rem;
+  color: var(--c-dim);
+}
+.dist-legend .swatch {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 2px;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+.dist-legend .swatch.expected { background: rgba(125, 133, 144, 0.45); }
+.dist-legend .swatch.observed { background: var(--c-plain); }
+
+.contrib-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+}
+.contrib-row {
+  display: grid;
+  grid-template-columns: 3rem 1fr 1fr 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+}
+.contrib-row.header {
+  background: transparent;
+  border-color: transparent;
+  color: var(--c-dim);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.contrib-row .c-letter { color: var(--c-plain); font-weight: 700; }
+.contrib-row .c-contrib { color: var(--c-key); text-align: right; }
+
+@media (max-width: 600px) {
+  .dist-chart { grid-template-columns: repeat(26, 1fr); height: 160px; }
+  .dist-label { font-size: 0.65rem; }
+  .contrib-row { grid-template-columns: 2rem 1fr 1fr 1fr; font-size: 0.78rem; gap: 0.4rem; }
 }
 
 footer.site-footer {

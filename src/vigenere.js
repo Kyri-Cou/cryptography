@@ -2,6 +2,8 @@
 // Per-character mapping shows the key letter aligned beneath each plaintext
 // letter, plus a tabula recta with row/column hover highlighting.
 
+import './nav.js';
+
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const $ = (id) => document.getElementById(id);

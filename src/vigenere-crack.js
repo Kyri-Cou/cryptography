@@ -3,6 +3,8 @@
 // each Caesar coset against English letter frequencies to recover the key
 // itself. Every step is rendered live as the user edits the ciphertext.
 
+import './nav.js';
+
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const ENGLISH_FREQ = {
