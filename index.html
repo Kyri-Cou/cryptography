@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/cryptography/favicon.png" />
+    <title>Cryptography Visualisations</title>
+    <script type="module" crossorigin src="/cryptography/assets/nav-B9CilQxm.js"></script>
+    <link rel="stylesheet" crossorigin href="/cryptography/assets/nav-Cs4kllpW.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="./">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./ciphers/caesar.html">Cipher</a>
+              <a href="./ciphers/caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./ciphers/vigenere.html">Cipher</a>
+              <a href="./ciphers/vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Bits</summary>
+            <div class="nav-menu">
+              <a href="./ciphers/binary.html">Binary</a>
+              <a href="./ciphers/bitwise-and.html">AND</a>
+              <a href="./ciphers/bitwise-or.html">OR</a>
+              <a href="./ciphers/bitwise-not.html">NOT</a>
+              <a href="./ciphers/bitwise-xor.html">XOR</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./ciphers/chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Interactive Cryptography</h1>
+      <p class="subtitle">
+        Hands-on visualisations of classical and modern ciphers. Pick one to explore.
+      </p>
+
+      <div class="cipher-grid">
+        <a class="cipher-card" href="./ciphers/caesar.html">
+          <h3>Caesar Cipher</h3>
+          <p>Shift each letter by a fixed amount — the simplest substitution cipher.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/caesar-crack.html">
+          <h3>Cracking Caesar</h3>
+          <p>Brute-force all 26 keys and let English letter frequencies pick the winner.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/vigenere.html">
+          <h3>Vigenère Cipher</h3>
+          <p>A repeating keyword turns Caesar into a polyalphabetic cipher — once unbreakable.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/vigenere-crack.html">
+          <h3>Cracking Vigenère</h3>
+          <p>Kasiski examination finds the period; brute-forcing each Caesar slice finds the key.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/chi-squared.html">
+          <h3>Chi-squared Test</h3>
+          <p>The English-likeness score that powers every frequency-based attack on this site.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/binary.html">
+          <h3>Binary Numbers</h3>
+          <p>Click bits to toggle them and explore positional notation, decimal, and hex.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/bitwise-and.html">
+          <h3>AND</h3>
+          <p>Both bits must be 1. The fundamental bitmask operation.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/bitwise-or.html">
+          <h3>OR</h3>
+          <p>At least one bit must be 1. Used to set bits without disturbing others.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/bitwise-not.html">
+          <h3>NOT</h3>
+          <p>Flips every bit. The one's complement — foundation of two's complement negation.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/bitwise-xor.html">
+          <h3>XOR</h3>
+          <p>Bits differ → 1. Self-inverse, so the same operation encrypts and decrypts.</p>
+        </a>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+  </body>
+</html>
