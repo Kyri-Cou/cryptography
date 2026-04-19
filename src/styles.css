@@ -222,7 +222,7 @@ label {
   letter-spacing: 0.06em;
 }
 
-input[type="text"], textarea {
+input[type="text"], input[type="number"], textarea {
   width: 100%;
   background: var(--c-bg);
   color: var(--c-text);
@@ -233,10 +233,17 @@ input[type="text"], textarea {
   font-size: 1rem;
   resize: vertical;
 }
-input[type="text"]:focus, textarea:focus {
+input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
   outline: none;
   border-color: var(--c-sub);
 }
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] { -moz-appearance: textfield; }
 
 input[type="range"] {
   width: 100%;
