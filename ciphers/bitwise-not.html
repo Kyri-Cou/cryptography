@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <title>Caesar Cipher · Cryptography Visualisations</title>
+    <title>NOT · Cryptography Visualisations</title>
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
+  <body data-op="not">
     <header class="site-header">
       <div class="inner">
         <h1>Cryptography Visualisations</h1>
@@ -55,71 +55,55 @@
     </header>
 
     <main>
-      <h1 class="page-title">Caesar Cipher</h1>
-      <p class="subtitle">
-        Each letter of the plaintext is replaced by the letter a fixed number of
-        positions further down the alphabet. Tweak the shift and watch the
-        alphabets re-align.
-      </p>
+      <h1 class="page-title">Bitwise NOT</h1>
+      <p class="subtitle" id="op-subtitle"></p>
 
       <section class="panel">
         <div class="controls">
           <div>
-            <label for="plaintext">Plaintext</label>
-            <textarea id="plaintext" rows="3" spellcheck="false">The quick brown fox jumps over the lazy dog</textarea>
-          </div>
-          <div>
-            <label for="shift">Shift (key)</label>
+            <label for="a-num">A</label>
             <div class="control-row">
-              <input id="shift" type="range" min="0" max="25" value="3" />
-              <span id="shift-display" class="shift-display">3</span>
-            </div>
-            <div class="control-row" style="margin-top: 1rem;">
-              <button id="decrypt-toggle">Switch to decrypt</button>
+              <input id="a-slider" type="range" min="0" max="255" value="170" />
+              <input id="a-num" type="number" min="0" max="255" value="170" class="num-box" />
             </div>
           </div>
         </div>
       </section>
 
-      <section class="viz">
-        <div class="track-label">Plaintext alphabet</div>
-        <div id="track-plain" class="alphabet-track plain"></div>
-        <div class="track-label">Cipher alphabet (shifted by <span id="track-shift">3</span>)</div>
-        <div id="track-cipher" class="alphabet-track cipher"></div>
-      </section>
-
-      <div class="io-grid">
-        <div class="io-block plain">
-          <div class="label" id="input-label">Plaintext</div>
-          <div id="input-display" class="value"></div>
+      <h2>Bit-by-bit operation</h2>
+      <p class="subtitle">
+        Each bit flips independently. The ¬ symbol shows that every bit
+        is inverted, with no second operand.
+      </p>
+      <div class="viz">
+        <div class="op-row-labels op-row-labels-not">
+          <span>A</span><span>¬</span><span>=</span>
         </div>
-        <div class="io-block cipher">
-          <div class="label" id="output-label">Ciphertext</div>
-          <div id="output-display" class="value"></div>
+        <div id="op-display" class="op-display"></div>
+      </div>
+
+      <h2>Summary</h2>
+      <div class="sum-grid">
+        <div class="sum-box a-box" id="sum-a">
+          <div class="sum-label">A</div>
+          <div class="sum-dec"></div>
+          <div class="sum-bin"></div>
+          <div class="sum-hex"></div>
+        </div>
+        <div class="sum-box r-box" id="sum-r">
+          <div class="sum-label">¬ A</div>
+          <div class="sum-dec"></div>
+          <div class="sum-bin"></div>
+          <div class="sum-hex"></div>
         </div>
       </div>
 
-      <h2>Per-character mapping</h2>
-      <p class="subtitle">
-        Hover or scan: each tile shows where one input letter lands. Non-letters
-        pass through unchanged.
-      </p>
-      <div id="mapping" class="mapping"></div>
+      <h2>Truth table</h2>
+      <div id="truth-table" class="truth-wrap"></div>
 
-      <h2>How it works</h2>
+      <h2>In cryptography</h2>
       <div class="panel">
-        <p>
-          The Caesar cipher is a <em>monoalphabetic substitution cipher</em>.
-          For shift <code>k</code>, every plaintext letter <code>p</code>
-          (numbered 0–25) becomes
-          <code>c = (p + k) mod 26</code>. Decryption is the same operation
-          with <code>-k</code>.
-        </p>
-        <p style="color: var(--c-dim); margin-bottom: 0;">
-          Because there are only 26 possible keys, the cipher is trivially
-          broken by brute force — but it remains a perfect introduction to the
-          shape of every cipher that follows.
-        </p>
+        <p id="crypto-use"></p>
       </div>
     </main>
 
@@ -127,6 +111,6 @@
       Built with Vite · © Kyri &amp; Cou Ltd
     </footer>
 
-    <script type="module" src="/src/caesar.js"></script>
+    <script type="module" src="/src/bitwise.js"></script>
   </body>
 </html>

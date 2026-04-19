@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <title>Caesar Cipher · Cryptography Visualisations</title>
+    <title>Binary · Cryptography Visualisations</title>
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body>
@@ -55,70 +55,77 @@
     </header>
 
     <main>
-      <h1 class="page-title">Caesar Cipher</h1>
+      <h1 class="page-title">Binary Numbers</h1>
       <p class="subtitle">
-        Each letter of the plaintext is replaced by the letter a fixed number of
-        positions further down the alphabet. Tweak the shift and watch the
-        alphabets re-align.
+        Computers store everything as 1s and 0s. Each bit represents a power of
+        two; add the active ones together to get the number. Click any bit to
+        toggle it.
       </p>
 
       <section class="panel">
         <div class="controls">
           <div>
-            <label for="plaintext">Plaintext</label>
-            <textarea id="plaintext" rows="3" spellcheck="false">The quick brown fox jumps over the lazy dog</textarea>
+            <label for="num-input">Decimal value (0 – 255)</label>
+            <input id="num-input" type="number" min="0" max="255" value="42" />
           </div>
           <div>
-            <label for="shift">Shift (key)</label>
-            <div class="control-row">
-              <input id="shift" type="range" min="0" max="25" value="3" />
-              <span id="shift-display" class="shift-display">3</span>
-            </div>
-            <div class="control-row" style="margin-top: 1rem;">
-              <button id="decrypt-toggle">Switch to decrypt</button>
-            </div>
+            <label for="slider">Slider</label>
+            <input id="slider" type="range" min="0" max="255" value="42" />
           </div>
         </div>
       </section>
 
-      <section class="viz">
-        <div class="track-label">Plaintext alphabet</div>
-        <div id="track-plain" class="alphabet-track plain"></div>
-        <div class="track-label">Cipher alphabet (shifted by <span id="track-shift">3</span>)</div>
-        <div id="track-cipher" class="alphabet-track cipher"></div>
-      </section>
+      <h2>8-bit representation</h2>
+      <p class="subtitle">Click any bit cell to flip it.</p>
+      <div class="panel">
+        <div class="bit-display-wrap">
+          <div class="bit-display">
+            <div id="powers-row" class="powers-row"></div>
+            <div id="bits-row"   class="bits-row"></div>
+          </div>
+        </div>
+        <p class="active-sum" id="active-sum"></p>
+      </div>
 
-      <div class="io-grid">
+      <h2>Representations</h2>
+      <div class="io-grid" style="grid-template-columns: repeat(3, 1fr);">
         <div class="io-block plain">
-          <div class="label" id="input-label">Plaintext</div>
-          <div id="input-display" class="value"></div>
+          <div class="label">Decimal</div>
+          <div id="dec-out" class="value">0</div>
         </div>
         <div class="io-block cipher">
-          <div class="label" id="output-label">Ciphertext</div>
-          <div id="output-display" class="value"></div>
+          <div class="label">Binary</div>
+          <div id="bin-out" class="value">00000000</div>
+        </div>
+        <div class="io-block" style="--block-color: var(--c-key);">
+          <div class="label">Hexadecimal</div>
+          <div id="hex-out" class="value" style="color: var(--c-key);">0x00</div>
         </div>
       </div>
 
-      <h2>Per-character mapping</h2>
-      <p class="subtitle">
-        Hover or scan: each tile shows where one input letter lands. Non-letters
-        pass through unchanged.
-      </p>
-      <div id="mapping" class="mapping"></div>
-
-      <h2>How it works</h2>
+      <h2>How binary works</h2>
       <div class="panel">
         <p>
-          The Caesar cipher is a <em>monoalphabetic substitution cipher</em>.
-          For shift <code>k</code>, every plaintext letter <code>p</code>
-          (numbered 0–25) becomes
-          <code>c = (p + k) mod 26</code>. Decryption is the same operation
-          with <code>-k</code>.
+          Binary is <em>base 2</em> — just like decimal is base 10 but with
+          only two digits (0 and 1). Each bit position represents the next
+          power of two: the rightmost is 2⁰&nbsp;=&nbsp;1, the next is
+          2¹&nbsp;=&nbsp;2, then 4, 8, 16, 32, 64, 128.
+        </p>
+        <p>
+          To read a binary number, add up the place values wherever a 1
+          appears. For example, <code>00101010</code> has 1s in the 32, 8, and
+          2 positions: 32 + 8 + 2 = <strong>42</strong>.
+        </p>
+        <p>
+          An 8-bit <em>byte</em> can represent 2⁸ = 256 distinct values
+          (0 – 255). Bytes are the atom of computer memory, and most
+          cryptographic operations work on bytes or groups of bytes.
         </p>
         <p style="color: var(--c-dim); margin-bottom: 0;">
-          Because there are only 26 possible keys, the cipher is trivially
-          broken by brute force — but it remains a perfect introduction to the
-          shape of every cipher that follows.
+          Hexadecimal (base 16, digits 0 – F) is a compact shorthand: each hex
+          digit maps to exactly four bits (a <em>nibble</em>), so one byte is
+          always two hex digits. That's why you see ciphertext, hashes, and
+          keys written in hex.
         </p>
       </div>
     </main>
@@ -127,6 +134,6 @@
       Built with Vite · © Kyri &amp; Cou Ltd
     </footer>
 
-    <script type="module" src="/src/caesar.js"></script>
+    <script type="module" src="/src/binary.js"></script>
   </body>
 </html>

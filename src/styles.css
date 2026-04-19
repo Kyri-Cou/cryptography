@@ -664,6 +664,231 @@ button.primary:hover { filter: brightness(1.1); }
   .candidate { grid-template-columns: 3rem 1fr 3.5rem; font-size: 0.82rem; }
 }
 
+/* ── Binary & bitwise operator pages ───────────────────────────────────── */
+
+/* Shared bit cell */
+.bit-cell {
+  width: 48px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--c-border);
+  border-radius: 5px;
+  background: var(--c-bg);
+  font-family: var(--font-mono);
+  transition: background 80ms ease, border-color 80ms ease, color 80ms ease;
+  flex-shrink: 0;
+}
+.bit-cell .bv { font-size: 1.3rem; font-weight: 700; line-height: 1; }
+.bit-cell.b1 {
+  background: rgba(63, 185, 80, 0.12);
+  border-color: var(--c-plain);
+  color: var(--c-plain);
+}
+.bit-cell.b0 { color: var(--c-dim); }
+.bit-cell.res.b1 {
+  background: rgba(255, 123, 114, 0.12);
+  border-color: var(--c-cipher);
+  color: var(--c-cipher);
+}
+.bit-cell.res.b0 { color: var(--c-dim); }
+.bit-cell.clickable { cursor: pointer; }
+.bit-cell.clickable:hover { border-color: var(--c-sub); }
+
+/* Binary page — place-value legend above the bit cells */
+.bit-display-wrap { overflow-x: auto; }
+.bit-display { min-width: fit-content; }
+.powers-row, .bits-row { display: flex; gap: 3px; }
+.bits-row { margin-top: 3px; }
+.power-cell {
+  width: 48px;
+  flex-shrink: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+.power-exp { font-size: 0.7rem; color: var(--c-dim); }
+.power-val { font-size: 0.85rem; color: var(--c-key); font-weight: 600; }
+.active-sum {
+  margin: 0.75rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--c-sub);
+}
+
+/* Bitwise operator page — columnar per-bit display */
+.op-display {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
+.op-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.op-sym {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--c-key);
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.op-line {
+  width: 100%;
+  height: 1px;
+  background: var(--c-border);
+  margin: 1px 0;
+}
+
+/* Row labels that sit to the left of the op-display inside .viz */
+.op-row-labels {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--c-dim);
+  padding: 0.5rem 0.5rem 0.5rem 0;
+  /* Same height as the op-display: 2 cells + sym + line + result = ~170px */
+  min-height: 170px;
+  flex-shrink: 0;
+}
+.op-row-labels-not { min-height: 120px; }
+
+.viz {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+/* Summary row for bitwise pages */
+.sum-grid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+.sum-box {
+  flex: 1;
+  min-width: 140px;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+.sum-box .sum-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-dim);
+  margin-bottom: 0.4rem;
+}
+.sum-box .sum-dec {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.sum-box .sum-bin {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  word-break: break-all;
+  margin-top: 0.25rem;
+}
+.sum-box .sum-hex {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--c-sub);
+  margin-top: 0.1rem;
+}
+.sum-box.a-box .sum-dec { color: var(--c-plain); }
+.sum-box.a-box .sum-bin { color: var(--c-plain); opacity: 0.8; }
+.sum-box.b-box .sum-dec { color: var(--c-key);   }
+.sum-box.b-box .sum-bin { color: var(--c-key);   opacity: 0.8; }
+.sum-box.r-box .sum-dec { color: var(--c-cipher);}
+.sum-box.r-box .sum-bin { color: var(--c-cipher);opacity: 0.8; }
+
+/* Truth table */
+.truth-wrap { margin-top: 1rem; overflow-x: auto; }
+.truth-table {
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+}
+.truth-table th,
+.truth-table td {
+  padding: 0.45rem 1.4rem;
+  text-align: center;
+  border: 1px solid var(--c-border);
+}
+.truth-table thead { background: var(--c-panel); color: var(--c-sub); }
+.truth-table td.b1 { color: var(--c-plain); }
+.truth-table td.b0 { color: var(--c-dim); }
+.truth-table td.result { color: var(--c-cipher); font-weight: 700; }
+
+/* Number input alongside a slider */
+.num-box {
+  width: 5rem !important;
+  flex-shrink: 0;
+}
+
+/* One-time pad demo (XOR page) */
+.otp-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+.otp-row {
+  display: grid;
+  grid-template-columns: 1.8rem 2.6rem 6rem 1.5rem 1.8rem 2.6rem 6rem 1.5rem 6rem 3.2rem;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.35rem 0.5rem;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  min-width: fit-content;
+}
+.otp-row.otp-header {
+  background: transparent;
+  border-color: transparent;
+  color: var(--c-dim);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.otp-char.plain { color: var(--c-plain);  font-weight: 700; }
+.otp-char.key   { color: var(--c-key);    font-weight: 700; }
+.otp-dec        { color: var(--c-dim);    text-align: right; }
+.otp-bin.plain  { color: var(--c-plain);  }
+.otp-bin.key    { color: var(--c-key);    }
+.otp-bin.res    { color: var(--c-cipher); }
+.otp-op         { color: var(--c-dim);    text-align: center; }
+.otp-hex        { color: var(--c-sub);    text-align: right; }
+
+@media (max-width: 600px) {
+  .bit-cell { width: 38px; height: 42px; }
+  .bit-cell .bv { font-size: 1.05rem; }
+  .power-cell { width: 38px; }
+  .power-val { font-size: 0.72rem; }
+  .op-row-labels { font-size: 0.75rem; }
+}
+
 /* ── Chi-squared page ───────────────────────────────────────────────────── */
 .chi-banner {
   display: flex;
