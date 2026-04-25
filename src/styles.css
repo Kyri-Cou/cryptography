@@ -1021,3 +1021,100 @@ footer.site-footer {
   text-align: center;
   padding: 1.25rem 1rem;
 }
+
+/* ── Vernam / one-time pad page ─────────────────────────────────────────── */
+
+/* Entropy collection bar */
+.entropy-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.35rem;
+}
+.entropy-track {
+  flex: 1;
+  height: 8px;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.entropy-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--c-key);
+  border-radius: 999px;
+  transition: width 200ms ease, background 300ms ease;
+}
+.entropy-bar.full { background: var(--c-plain); }
+.entropy-pct {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--c-dim);
+  min-width: 2.8rem;
+  text-align: right;
+}
+
+/* Hex display (key / ciphertext) */
+.hex-display {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  word-break: break-all;
+  line-height: 1.65;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+.key-hex-display { color: var(--c-key); }
+
+/* Byte-by-byte XOR grid */
+.vb-grid {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+  min-width: fit-content;
+}
+.vb-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 36px;
+}
+.vb-cell {
+  width: 36px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  border: 1px solid var(--c-border);
+  background: var(--c-bg);
+}
+.vb-char  { font-size: 0.9rem; color: var(--c-plain);  border-color: rgba(63,185,80,0.35); background: rgba(63,185,80,0.07); }
+.vb-plain { color: var(--c-plain); }
+.vb-key   { color: var(--c-key);   border-color: rgba(210,168,255,0.35); background: rgba(210,168,255,0.07); }
+.vb-cipher{ color: var(--c-cipher); border-color: rgba(255,123,114,0.35); background: rgba(255,123,114,0.07); }
+.vb-sym {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--c-dim);
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+.vb-line {
+  width: 100%;
+  height: 1px;
+  background: var(--c-border);
+  margin: 1px 0;
+}
+
+@media (max-width: 600px) {
+  .vb-cell { width: 30px; height: 22px; font-size: 0.68rem; }
+  .vb-char  { font-size: 0.78rem; }
+  .vb-col   { min-width: 30px; }
+}
