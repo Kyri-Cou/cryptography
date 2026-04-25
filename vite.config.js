@@ -21,6 +21,7 @@ export default defineConfig({
         bitwiseOr:    resolve(__dirname, 'ciphers/bitwise-or.html'),
         bitwiseNot:   resolve(__dirname, 'ciphers/bitwise-not.html'),
         bitwiseXor:   resolve(__dirname, 'ciphers/bitwise-xor.html'),
+        vernam:       resolve(__dirname, 'ciphers/vernam.html'),
       },
     },
   },
