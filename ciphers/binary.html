@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/cryptography/favicon.png" />
+    <title>Binary · Cryptography Visualisations</title>
+    <script type="module" crossorigin src="/cryptography/assets/binary-qP4wD6On.js"></script>
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/nav-CNdfSS1k.js">
+    <link rel="stylesheet" crossorigin href="/cryptography/assets/nav-Cqn3kz2D.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vernam</summary>
+            <div class="nav-menu">
+              <a href="./vernam.html">Cipher</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Bits</summary>
+            <div class="nav-menu">
+              <a href="./binary.html">Binary</a>
+              <a href="./bitwise-and.html">AND</a>
+              <a href="./bitwise-or.html">OR</a>
+              <a href="./bitwise-not.html">NOT</a>
+              <a href="./bitwise-xor.html">XOR</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Binary Numbers</h1>
+      <p class="subtitle">
+        Computers store everything as 1s and 0s. Each bit represents a power of
+        two; add the active ones together to get the number. Click any bit to
+        toggle it.
+      </p>
+
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <label for="num-input">Decimal value (0 – 255)</label>
+            <input id="num-input" type="number" min="0" max="255" value="42" />
+          </div>
+          <div>
+            <label for="slider">Slider</label>
+            <input id="slider" type="range" min="0" max="255" value="42" />
+          </div>
+        </div>
+      </section>
+
+      <h2>8-bit representation</h2>
+      <p class="subtitle">Click any bit cell to flip it.</p>
+      <div class="panel">
+        <div class="bit-display-wrap">
+          <div class="bit-display">
+            <div id="powers-row" class="powers-row"></div>
+            <div id="bits-row"   class="bits-row"></div>
+          </div>
+        </div>
+        <p class="active-sum" id="active-sum"></p>
+      </div>
+
+      <h2>Representations</h2>
+      <div class="io-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="io-block plain">
+          <div class="label">Decimal</div>
+          <div id="dec-out" class="value">0</div>
+        </div>
+        <div class="io-block cipher">
+          <div class="label">Binary</div>
+          <div id="bin-out" class="value">00000000</div>
+        </div>
+        <div class="io-block" style="--block-color: var(--c-key);">
+          <div class="label">Hexadecimal</div>
+          <div id="hex-out" class="value" style="color: var(--c-key);">0x00</div>
+        </div>
+      </div>
+
+      <h2>How binary works</h2>
+      <div class="panel">
+        <p>
+          Binary is <em>base 2</em> — just like decimal is base 10 but with
+          only two digits (0 and 1). Each bit position represents the next
+          power of two: the rightmost is 2⁰&nbsp;=&nbsp;1, the next is
+          2¹&nbsp;=&nbsp;2, then 4, 8, 16, 32, 64, 128.
+        </p>
+        <p>
+          To read a binary number, add up the place values wherever a 1
+          appears. For example, <code>00101010</code> has 1s in the 32, 8, and
+          2 positions: 32 + 8 + 2 = <strong>42</strong>.
+        </p>
+        <p>
+          An 8-bit <em>byte</em> can represent 2⁸ = 256 distinct values
+          (0 – 255). Bytes are the atom of computer memory, and most
+          cryptographic operations work on bytes or groups of bytes.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          Hexadecimal (base 16, digits 0 – F) is a compact shorthand: each hex
+          digit maps to exactly four bits (a <em>nibble</em>), so one byte is
+          always two hex digits. That's why you see ciphertext, hashes, and
+          keys written in hex.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+  </body>
+</html>
