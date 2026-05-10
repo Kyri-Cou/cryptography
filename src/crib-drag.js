@@ -37,12 +37,11 @@ function setup() {
 
   dragPos = 0;
   lastCribStr = '';
+  renderXorRow();   // static per message pair — only rebuilt here
   updateCrib();
 }
 
 // ── Scoring ────────────────────────────────────────────────────────────────
-// Returns -1 if any byte is non-printable. Otherwise returns the fraction
-// of bytes that are ASCII letters or space — English prose ≈ 0.85–1.0.
 function textScore(bytes) {
   for (const b of bytes) if (b < 0x20 || b > 0x7e) return -1;
   const letterSpace = bytes.filter(
@@ -56,7 +55,7 @@ function charDisplay(b) {
 }
 
 function scoreClass(score) {
-  if (score < 0)    return 'dv-dead';
+  if (score < 0)     return 'dv-dead';
   if (score >= 0.75) return 'dv-hit';
   if (score >= 0.55) return 'dv-warm';
   return '';
@@ -85,17 +84,31 @@ function updateCrib() {
     lastCribStr = cribStr;
   }
 
-  // Sync active-position highlight in the sorted table
   document.querySelectorAll('.crib-row').forEach(r => {
     r.classList.toggle('active-pos', parseInt(r.dataset.pos) === dragPos);
   });
 }
 
+// ── Render the static XOR row (once per message/key change) ───────────────
+function renderXorRow() {
+  let html = '';
+  for (let i = 0; i < XOR12.length; i++) {
+    const b = XOR12[i];
+    html += `<span class="dv-byte dv-xor" data-pos="${i}">`
+          + `<span class="dv-hex">${toHex(new Uint8Array([b]))}</span>`
+          + `<span class="dv-ch">${charDisplay(b)}</span>`
+          + `</span>`;
+  }
+  document.getElementById('dv-xor-cells').innerHTML = html;
+}
+
 // ── Visual drag panel ──────────────────────────────────────────────────────
 function clearVisual() {
-  ['dv-xor-cells', 'dv-crib-cells', 'dv-result-cells'].forEach(id => {
-    document.getElementById(id).innerHTML = '';
-  });
+  document.getElementById('dv-crib-cells').innerHTML = '';
+  document.getElementById('dv-result-cells').innerHTML = '';
+  // Remove active highlights from the static XOR row
+  Array.from(document.getElementById('dv-xor-cells').children)
+    .forEach(c => c.classList.remove('dv-active'));
   document.getElementById('pos-label').textContent = '';
   document.getElementById('match-badge').hidden = true;
   document.getElementById('prev-btn').disabled = true;
@@ -109,17 +122,11 @@ function renderVisual(crib, maxPos) {
   const sCls    = scoreClass(score);
   const n       = XOR12.length;
 
-  // ── P₁⊕P₂ row ─────────────────────────────────────────────────────────
-  let xorHtml = '';
-  for (let i = 0; i < n; i++) {
-    const b      = XOR12[i];
-    const active = i >= dragPos && i < dragPos + crib.length;
-    xorHtml += `<span class="dv-byte dv-xor${active ? ' dv-active' : ''}" data-pos="${i}">`
-             + `<span class="dv-hex">${toHex(new Uint8Array([b]))}</span>`
-             + `<span class="dv-ch">${charDisplay(b)}</span>`
-             + `</span>`;
+  // ── P₁⊕P₂ row: toggle active class only (row is static) ───────────────
+  const xorChildren = document.getElementById('dv-xor-cells').children;
+  for (let i = 0; i < xorChildren.length; i++) {
+    xorChildren[i].classList.toggle('dv-active', i >= dragPos && i < dragPos + crib.length);
   }
-  document.getElementById('dv-xor-cells').innerHTML = xorHtml;
 
   // ── Crib row ───────────────────────────────────────────────────────────
   let cribHtml = '';
@@ -128,7 +135,7 @@ function renderVisual(crib, maxPos) {
     if (ci >= 0 && ci < crib.length) {
       const b = crib[ci];
       cribHtml += `<span class="dv-byte dv-crib">`
-               + `<span class="dv-ch dv-ch-big">${String.fromCharCode(b)}</span>`
+               + `<span class="dv-ch dv-ch-big">${charDisplay(b)}</span>`
                + `<span class="dv-hex">${toHex(new Uint8Array([b]))}</span>`
                + `</span>`;
     } else {
@@ -152,14 +159,6 @@ function renderVisual(crib, maxPos) {
     }
   }
   document.getElementById('dv-result-cells').innerHTML = resHtml;
-
-  // Click-to-position on XOR bytes
-  document.getElementById('dv-xor-cells').querySelectorAll('.dv-byte[data-pos]').forEach(cell => {
-    cell.addEventListener('click', () => {
-      dragPos = Math.min(parseInt(cell.dataset.pos), maxPos);
-      updateCrib();
-    });
-  });
 
   // ── Controls ───────────────────────────────────────────────────────────
   const slider = document.getElementById('pos-slider');
@@ -200,7 +199,7 @@ function scrollActiveIntoView() {
   const visual  = document.getElementById('drag-visual');
   const active  = visual.querySelector('.dv-active');
   if (!active) return;
-  const cellW  = active.offsetWidth + 3;   // cell + gap
+  const cellW   = active.offsetWidth + 3;
   const labelEl = visual.querySelector('.dv-label');
   const labelW  = labelEl ? labelEl.offsetWidth : 80;
   const pos     = labelW + dragPos * cellW;
@@ -280,14 +279,12 @@ document.getElementById('crib-input').addEventListener('input', () => {
 });
 
 document.getElementById('prev-btn').addEventListener('click', () => {
-  dragPos = Math.max(0, dragPos - 1);
+  dragPos--;
   updateCrib();
 });
 
 document.getElementById('next-btn').addEventListener('click', () => {
-  if (!XOR12) return;
-  const maxPos = Math.max(0, XOR12.length - enc.encode(document.getElementById('crib-input').value).length);
-  dragPos = Math.min(maxPos, dragPos + 1);
+  dragPos++;
   updateCrib();
 });
 
@@ -296,16 +293,23 @@ document.getElementById('pos-slider').addEventListener('input', e => {
   updateCrib();
 });
 
+// Delegated click on XOR row — registered once, survives renderXorRow rebuilds
+document.getElementById('dv-xor-cells').addEventListener('click', e => {
+  const cell = e.target.closest('.dv-byte[data-pos]');
+  if (cell) {
+    dragPos = parseInt(cell.dataset.pos);
+    updateCrib();
+  }
+});
+
 document.getElementById('drag-visual').addEventListener('keydown', e => {
-  if (!XOR12) return;
-  const maxPos = Math.max(0, XOR12.length - enc.encode(document.getElementById('crib-input').value).length);
   if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
     e.preventDefault();
-    dragPos = Math.max(0, dragPos - 1);
+    dragPos--;
     updateCrib();
   } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
     e.preventDefault();
-    dragPos = Math.min(maxPos, dragPos + 1);
+    dragPos++;
     updateCrib();
   }
 });
