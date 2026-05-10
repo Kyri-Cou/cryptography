@@ -135,17 +135,16 @@ function onCollision() {
   //   P_A ⊕ (P_A ⊕ P_B) = P_B  — the entire payload of B is revealed.
   const aPt = makePayload(a.payloadIdx);
   const bPt = makePayload(b.payloadIdx);
-  const len  = Math.min(aPt.length, xorCt.length);
-  const recoveredB = xorBytes(xorCt.slice(0, len), aPt.slice(0, len));
+  const recoveredB = xorBytes(xorCt, aPt);  // xorBytes clamps to min length
 
   document.getElementById('crib-section2').hidden = false;
   document.getElementById('kp-a-hex').textContent  = hexSpaced(toHex(aPt));
   document.getElementById('kp-a-str').textContent  = ptChars(aPt);
-  document.getElementById('kp-xor-hex').textContent = hexSpaced(toHex(xorCt.slice(0, len)));
+  document.getElementById('kp-xor-hex').textContent = hexSpaced(toHex(xorCt));
   document.getElementById('kp-b-hex').textContent  = hexSpaced(toHex(recoveredB));
   document.getElementById('kp-b-str').textContent  = ptChars(recoveredB);
-  // Badge: show the readable payload text we just recovered (bytes 6+)
-  document.getElementById('kp-badge').textContent  = `"${PAYLOADS[b.payloadIdx]}"`;
+  // Show what the XOR actually produced (bytes 6+ are the readable payload)
+  document.getElementById('kp-badge').textContent  = `"${ptChars(recoveredB.slice(6))}"`;
 
   // ── Ground truth: display both actual plaintexts in consistent format ─────
   document.getElementById('reveal-section').hidden = false;
