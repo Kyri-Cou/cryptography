@@ -122,21 +122,49 @@
       <section id="crib-section" hidden>
         <h2>Drag the crib</h2>
         <p class="subtitle">
-          Type a word or phrase you expect to appear in one of the messages.
-          At each byte offset the tool computes <code>crib ⊕ (P₁⊕P₂)</code>
-          and scores the result by its <strong>letter-and-space ratio</strong> —
-          English prose runs 85–100%; random bytes average ~55%.
-          Rows with non-printable output are faded out. Green rows are genuine matches.
+          Type a word you expect in one of the messages. Use the controls — or
+          click any byte, drag the slider, or press ← → — to slide the crib
+          along P₁&nbsp;⊕&nbsp;P₂. The result row shows what each position
+          decodes to, scored by its <strong>letter-and-space ratio</strong>.
+          English prose scores 85–100%; random bytes average ~55%.
         </p>
+
         <div class="panel">
-          <div class="control-row" style="gap: 0.6rem; flex-wrap: wrap;">
-            <label for="crib-input" style="white-space: nowrap; align-self: center;">Try the word</label>
+          <div class="control-row" style="gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.1rem;">
+            <label for="crib-input" style="white-space: nowrap; align-self: center; margin-bottom: 0;">Crib word</label>
             <input id="crib-input" type="text" value="at dawn" spellcheck="false"
-              autocomplete="off" style="width: 12rem;" />
-            <button id="drag-btn">Drag</button>
+              autocomplete="off" style="width: 14rem;" />
+          </div>
+
+          <!-- ── Visual drag panel ──────────────────────────────────────── -->
+          <div class="drag-visual" id="drag-visual" tabindex="0"
+               title="Click a byte to jump there · Arrow keys to step · Drag the slider">
+            <div class="dv-row">
+              <span class="dv-label">P₁⊕P₂</span>
+              <div class="dv-cells" id="dv-xor-cells"></div>
+            </div>
+            <div class="dv-row">
+              <span class="dv-label">Crib</span>
+              <div class="dv-cells" id="dv-crib-cells"></div>
+            </div>
+            <div class="dv-row">
+              <span class="dv-label">Result</span>
+              <div class="dv-cells" id="dv-result-cells"></div>
+            </div>
+          </div>
+
+          <!-- ── Navigation ─────────────────────────────────────────────── -->
+          <div class="drag-nav">
+            <button id="prev-btn" class="drag-nav-btn" disabled title="Previous (←)">◀</button>
+            <input id="pos-slider" type="range" min="0" max="0" value="0" class="drag-slider" />
+            <button id="next-btn" class="drag-nav-btn" title="Next (→)">▶</button>
+            <code id="pos-label" class="drag-pos-label"></code>
+            <span id="match-badge" class="crib-badge" hidden></span>
           </div>
         </div>
 
+        <p style="margin: 1.75rem 0 0.3rem; font-size: 0.72rem; text-transform: uppercase;
+                  letter-spacing: 0.07em; color: var(--c-dim);">All positions — sorted by score</p>
         <div class="crib-header">
           <span class="cr-pos">Pos</span>
           <span class="cr-crib-hex">Crib (hex)</span>
@@ -145,7 +173,7 @@
           <span class="cr-arrow"></span>
           <span class="cr-cand-str">Candidate</span>
           <span class="cr-cand-hex"></span>
-          <span class="cr-score">Printable</span>
+          <span class="cr-score">Score</span>
           <span></span>
         </div>
         <div id="drag-results" class="crib-results"></div>
