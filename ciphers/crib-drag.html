@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Crib Dragging · Cryptography Visualisations</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vernam</summary>
+            <div class="nav-menu">
+              <a href="./vernam.html">Cipher</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Attacks</summary>
+            <div class="nav-menu">
+              <a href="./crib-drag.html">Crib Drag</a>
+              <a href="./wep.html">WEP</a>
+              <a href="./prng-abuse.html">Weak PRNG</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Bits</summary>
+            <div class="nav-menu">
+              <a href="./binary.html">Binary</a>
+              <a href="./bitwise-and.html">AND</a>
+              <a href="./bitwise-or.html">OR</a>
+              <a href="./bitwise-not.html">NOT</a>
+              <a href="./bitwise-xor.html">XOR</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Crib Dragging</h1>
+      <p class="subtitle">
+        When two messages are encrypted with the <em>same</em> key, XORing the
+        ciphertexts cancels the key and leaves P₁&nbsp;⊕&nbsp;P₂. Drag a
+        known word — a <em>crib</em> — through that XOR to reveal fragments of
+        both plaintexts. This is how Soviet OTP reuse was exploited.
+      </p>
+
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <label for="msg1">Message 1</label>
+            <textarea id="msg1" rows="2" spellcheck="false">Attack at dawn tomorrow</textarea>
+          </div>
+          <div>
+            <label for="msg2">Message 2</label>
+            <textarea id="msg2" rows="2" spellcheck="false">Retreat to safe house now</textarea>
+          </div>
+        </div>
+        <div class="control-row" style="margin-top: 1rem; gap: 0.6rem; flex-wrap: wrap;">
+          <button id="setup-btn" class="primary">Encrypt both with the same key</button>
+        </div>
+        <div style="margin-top: 0.9rem;">
+          <div class="label" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-dim);">Shared key (secret)</div>
+          <div id="key-display" class="hex-display key-hex-display" style="margin-top: 0.3rem;"></div>
+        </div>
+      </section>
+
+      <section id="cipher-section" hidden>
+        <h2>Intercepted ciphertexts</h2>
+        <p class="subtitle">
+          An eavesdropper captures both of these. Neither reveals anything on
+          its own — but XORing them together cancels the key entirely.
+        </p>
+        <div class="intercept-grid">
+          <div class="intercept-box cipher">
+            <div class="intercept-label">C₁ (Message 1 encrypted)</div>
+            <div id="c1-display" class="hex-display"></div>
+          </div>
+          <div class="intercept-box cipher">
+            <div class="intercept-label">C₂ (Message 2 encrypted)</div>
+            <div id="c2-display" class="hex-display"></div>
+          </div>
+          <div class="intercept-box xor-result">
+            <div class="intercept-label">C₁ ⊕ C₂ = P₁ ⊕ P₂ &nbsp;<span style="font-weight:400; color: var(--c-dim);">(key cancels — this is what the attacker works with)</span></div>
+            <div id="xor-display" class="hex-display xor-hex-display"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="crib-section" hidden>
+        <h2>Drag the crib</h2>
+        <p class="subtitle">
+          Type a word you expect to appear in one of the messages. At each
+          byte offset the tool computes <code>crib ⊕ (P₁⊕P₂)</code> — if the
+          result looks like English text, the crib landed in one message and
+          the output reveals the matching bytes of the <em>other</em>.
+        </p>
+        <div class="panel">
+          <div class="control-row" style="gap: 0.6rem; flex-wrap: wrap;">
+            <label for="crib-input" style="white-space: nowrap; align-self: center;">Try the word</label>
+            <input id="crib-input" type="text" value="at" spellcheck="false"
+              autocomplete="off" style="width: 12rem;" />
+            <button id="drag-btn">Drag</button>
+          </div>
+        </div>
+
+        <div class="crib-header">
+          <span class="cr-pos">Pos</span>
+          <span class="cr-crib-hex">Crib (hex)</span>
+          <span class="cr-arrow"></span>
+          <span class="cr-xor-hex">⊕ window</span>
+          <span class="cr-arrow"></span>
+          <span class="cr-cand-str">Candidate</span>
+          <span class="cr-cand-hex"></span>
+          <span class="cr-score">Printable</span>
+          <span></span>
+        </div>
+        <div id="drag-results" class="crib-results"></div>
+      </section>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          The attack relies on a single property of XOR:
+          <code>(P ⊕ K) ⊕ (Q ⊕ K) = P ⊕ Q</code>. The key vanishes. What
+          remains is the XOR of the two plaintexts — a much weaker object than
+          either ciphertext alone.
+        </p>
+        <p>
+          Natural language is highly redundant. Common words like
+          <em>the</em>, <em>and</em>, <em>attack</em> appear predictably.
+          Sliding such a crib through P₁&nbsp;⊕&nbsp;P₂ and checking whether
+          the output is printable ASCII quickly locates the word in one message
+          and reveals the corresponding bytes of the other.
+        </p>
+        <p>
+          Once a fragment is confirmed, it becomes a new crib. A skilled
+          analyst can bootstrap from a single known word to full plaintext
+          recovery — exactly the technique Soviet signals intelligence suffered
+          when key material was reused under pressure during WWII.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          The defence is absolute: <strong>never reuse a one-time pad key</strong>.
+          A key used twice is no longer a one-time pad — it is just an
+          unkeyed XOR.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+    <script type="module" src="/src/crib-drag.js"></script>
+  </body>
+</html>

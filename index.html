@@ -34,6 +34,14 @@
             </div>
           </details>
           <details class="nav-group">
+            <summary>Attacks</summary>
+            <div class="nav-menu">
+              <a href="./ciphers/crib-drag.html">Crib Drag</a>
+              <a href="./ciphers/wep.html">WEP</a>
+              <a href="./ciphers/prng-abuse.html">Weak PRNG</a>
+            </div>
+          </details>
+          <details class="nav-group">
             <summary>Bits</summary>
             <div class="nav-menu">
               <a href="./ciphers/binary.html">Binary</a>
@@ -110,6 +118,18 @@
         <a class="cipher-card" href="./ciphers/vernam.html">
           <h3>Vernam Cipher</h3>
           <p>The one-time pad: XOR with a truly random key. Provably unbreakable when used correctly.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/crib-drag.html">
+          <h3>Crib Dragging</h3>
+          <p>Reusing an OTP key lets you XOR two ciphertexts and drag known words to read both messages.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/wep.html">
+          <h3>WEP IV Collision</h3>
+          <p>WEP's 24-bit IV space causes keystream reuse after ~4 900 packets. Birthday paradox in action.</p>
+        </a>
+        <a class="cipher-card" href="./ciphers/prng-abuse.html">
+          <h3>Weak PRNG</h3>
+          <p>Netscape SSL seeded its PRNG with time ^ PID — guessable values that collapse 128-bit keys.</p>
         </a>
       </div>
     </main>
