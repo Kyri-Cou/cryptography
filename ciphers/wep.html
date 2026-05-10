@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/cryptography/favicon.png" />
+    <title>WEP IV Collision · Cryptography Visualisations</title>
+    <script type="module" crossorigin src="/cryptography/assets/wep-I5hi9Y89.js"></script>
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/nav-ebzO27kf.js">
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/rc4-BYMAJWXl.js">
+    <link rel="stylesheet" crossorigin href="/cryptography/assets/nav-CV7Jz6De.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vernam</summary>
+            <div class="nav-menu">
+              <a href="./vernam.html">Cipher</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Attacks</summary>
+            <div class="nav-menu">
+              <a href="./crib-drag.html">Crib Drag</a>
+              <a href="./wep.html">WEP</a>
+              <a href="./prng-abuse.html">Weak PRNG</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Bits</summary>
+            <div class="nav-menu">
+              <a href="./binary.html">Binary</a>
+              <a href="./bitwise-and.html">AND</a>
+              <a href="./bitwise-or.html">OR</a>
+              <a href="./bitwise-not.html">NOT</a>
+              <a href="./bitwise-xor.html">XOR</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">WEP: IV Collision Attack</h1>
+      <p class="subtitle">
+        WEP prepends a 24-bit Initialisation Vector to the secret key before
+        handing both to RC4. Only 2²⁴ ≈ 16.7 million IVs exist. The birthday
+        paradox guarantees a collision — two packets sharing an IV — after
+        roughly 4 900 packets. Once an IV repeats, the keystream repeats:
+        same vulnerability, same crib-drag attack.
+      </p>
+
+      <section class="panel">
+        <div class="key-structure-diagram">
+          <div class="ks-block iv-block">
+            <div class="ks-label">IV (3 bytes · 24 bits)</div>
+            <div class="ks-bytes">
+              <span class="ks-byte"></span>
+              <span class="ks-byte"></span>
+              <span class="ks-byte"></span>
+            </div>
+            <div class="ks-note">chosen per-packet at random</div>
+          </div>
+          <div class="ks-cat">‖</div>
+          <div class="ks-block key-block">
+            <div class="ks-label">Secret key (5 bytes · 40 bits)</div>
+            <div class="ks-bytes">
+              <span class="ks-byte"></span>
+              <span class="ks-byte"></span>
+              <span class="ks-byte"></span>
+              <span class="ks-byte"></span>
+              <span class="ks-byte"></span>
+            </div>
+            <div class="ks-note">shared, never changes</div>
+          </div>
+          <div class="ks-arrow">→ RC4 →</div>
+          <div class="ks-block out-block">
+            <div class="ks-label">Keystream</div>
+            <div class="ks-bytes">
+              <span class="ks-byte"></span>
+              <span class="ks-byte"></span>
+              <span class="ks-byte ks-dots">…</span>
+            </div>
+            <div class="ks-note">XOR'd with plaintext</div>
+          </div>
+        </div>
+      </section>
+
+      <h2>Packet capture simulation</h2>
+      <p class="subtitle">
+        Each simulated packet picks a random 24-bit IV. The birthday paradox
+        says collisions arrive far sooner than the full IV space is exhausted.
+      </p>
+      <div class="panel">
+        <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;">
+          <div>
+            <div class="label" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-dim);">Secret WEP key</div>
+            <div id="wep-key-display" class="mono-val key-val" style="margin-top: 0.25rem;"></div>
+          </div>
+          <div>
+            <div class="label" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-dim);">Packets captured</div>
+            <div id="pkt-count" class="mono-val big-counter">0</div>
+          </div>
+          <div style="margin-left: auto;">
+            <button id="capture-btn" class="primary">Start capture</button>
+          </div>
+        </div>
+
+        <div class="label" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-dim); margin-bottom: 0.4rem;">
+          Birthday-paradox collision probability
+        </div>
+        <div class="entropy-wrap">
+          <div class="entropy-track">
+            <div id="prob-bar" class="entropy-bar" style="background: var(--c-cipher);"></div>
+          </div>
+          <span id="prob-pct" class="entropy-pct">0.0%</span>
+        </div>
+        <p class="hint">Expected first collision ≈ 4 900 packets (√(2 × 2²⁴) × 1.18)</p>
+
+        <div class="label" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-dim); margin: 1rem 0 0.4rem;">Recent packets (IV · ciphertext preview · payload type)</div>
+        <div id="packet-list" class="packet-list"></div>
+      </div>
+
+      <section id="collision-section" hidden>
+        <h2>IV collision detected!</h2>
+        <p class="subtitle">
+          Two packets share the same IV — meaning they were encrypted with the
+          <em>same</em> RC4 keystream. XORing their ciphertexts cancels the
+          keystream and leaves the XOR of their plaintexts.
+        </p>
+        <div class="panel collision-panel">
+          <div class="col-row">
+            <span class="col-label">Matching IV</span>
+            <code id="col-iv" class="col-val cipher-val"></code>
+          </div>
+          <div class="col-row">
+            <span class="col-label">Packets captured</span>
+            <code id="col-pkts" class="col-val"></code>
+          </div>
+          <div class="col-row" style="margin-top: 0.9rem;">
+            <span class="col-label">Packet A ciphertext</span>
+            <code id="col-a-ct" class="col-val cipher-val small-mono"></code>
+          </div>
+          <div class="col-row">
+            <span class="col-label">Packet B ciphertext</span>
+            <code id="col-b-ct" class="col-val cipher-val small-mono"></code>
+          </div>
+          <div class="col-row collision-xor-row">
+            <span class="col-label">A ⊕ B = P<sub>A</sub> ⊕ P<sub>B</sub></span>
+            <code id="col-xor-ct" class="col-val xor-val small-mono"></code>
+          </div>
+        </div>
+      </section>
+
+      <section id="crib-section2" hidden>
+        <h2>Known-plaintext recovery</h2>
+        <p class="subtitle">
+          Every 802.11 data frame starts with the 6-byte LLC/SNAP header
+          <code>AA AA 03 00 00 00</code>. Standard network traffic —
+          ARP, DHCP, DNS, HTTP — is highly predictable, so an attacker can
+          often reconstruct the full plaintext of packet A. XOR-ing that
+          known plaintext with P<sub>A</sub>&nbsp;⊕&nbsp;P<sub>B</sub>
+          directly yields packet B's complete payload.
+        </p>
+        <div class="panel">
+          <div class="crib2-grid">
+            <div class="c2-row">
+              <span class="c2-label">P<sub>A</sub> — known plaintext (crib)</span>
+              <div class="kp-pair">
+                <code id="kp-a-hex" class="c2-val key-val"></code>
+                <code id="kp-a-str" class="kp-chars key-val"></code>
+              </div>
+              <span></span>
+            </div>
+            <div class="c2-row">
+              <span class="c2-label">⊕ P<sub>A</sub> ⊕ P<sub>B</sub></span>
+              <code id="kp-xor-hex" class="c2-val xor-val"></code>
+              <span></span>
+            </div>
+            <div class="c2-row">
+              <span class="c2-label">= Recovered P<sub>B</sub></span>
+              <div class="kp-pair">
+                <code id="kp-b-hex" class="c2-val plain-val"></code>
+                <code id="kp-b-str" class="kp-chars plain-val"></code>
+              </div>
+              <span id="kp-badge" class="crib-badge hit"></span>
+            </div>
+          </div>
+          <p style="margin: 0.65rem 0 0; font-size: 0.8rem; color: var(--c-dim);">
+            Bytes 0–5 are the LLC/SNAP header — non-printable, shown as&nbsp;<code>·</code>.
+            Bytes 6+ are the recovered payload — compare with Ground truth below.
+          </p>
+        </div>
+      </section>
+
+      <section id="reveal-section" hidden>
+        <h2>Ground truth</h2>
+        <p class="subtitle">
+          The actual plaintexts — verify that the recovered payload matches
+          packet B exactly.
+        </p>
+        <div class="intercept-grid">
+          <div class="intercept-box plain">
+            <div class="intercept-label">Packet A plaintext (used as crib)</div>
+            <code id="col-a-hex" class="hex-display key-val" style="font-size:0.78rem;"></code>
+            <div id="col-a-str" class="pt-chars plain-val"></div>
+          </div>
+          <div class="intercept-box plain">
+            <div class="intercept-label">Packet B plaintext (what we recovered)</div>
+            <code id="col-b-hex" class="hex-display plain-hex-display" style="font-size:0.78rem;"></code>
+            <div id="col-b-str" class="pt-chars plain-val"></div>
+          </div>
+        </div>
+      </section>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          WEP (Wired Equivalent Privacy, IEEE 802.11, 1997) tried to add
+          per-packet key diversity by prepending a fresh 24-bit IV to the
+          shared secret before initialising RC4. The assumption was that with
+          16.7 million possible IVs, repetition would be rare enough to be safe.
+        </p>
+        <p>
+          The birthday paradox demolished that assumption. After only ~4 900
+          packets — a few seconds on a busy network — there is a 50% chance of
+          an IV collision. After ~9 700 packets the probability exceeds 99.9%.
+          Many consumer access points simply incremented the IV by one for each
+          packet, guaranteeing a full wrap every 16.7 million frames and cycling
+          through all IVs in minutes on a saturated link.
+        </p>
+        <p>
+          A collision means two packets share a keystream. Their ciphertexts
+          XOR together to give P<sub>A</sub>&nbsp;⊕&nbsp;P<sub>B</sub>, and
+          the attack becomes straightforward crib-dragging, amplified by the
+          predictable LLC/SNAP and IP/ARP headers that begin almost every
+          Wi-Fi frame.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          A separate, more powerful attack — Fluhrer–Mantin–Shamir (FMS, 2001)
+          — exploits weak RC4 IVs to recover the secret key byte-by-byte from
+          a few million packets. WEP was formally deprecated in 2004 and
+          replaced by WPA/WPA2 (TKIP, then AES-CCMP).
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+  </body>
+</html>

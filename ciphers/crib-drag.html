@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/cryptography/favicon.png" />
+    <title>Crib Dragging · Cryptography Visualisations</title>
+    <script type="module" crossorigin src="/cryptography/assets/cribDrag-CkGlF5z6.js"></script>
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/nav-ebzO27kf.js">
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/rc4-BYMAJWXl.js">
+    <link rel="stylesheet" crossorigin href="/cryptography/assets/nav-CV7Jz6De.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vernam</summary>
+            <div class="nav-menu">
+              <a href="./vernam.html">Cipher</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Attacks</summary>
+            <div class="nav-menu">
+              <a href="./crib-drag.html">Crib Drag</a>
+              <a href="./wep.html">WEP</a>
+              <a href="./prng-abuse.html">Weak PRNG</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Bits</summary>
+            <div class="nav-menu">
+              <a href="./binary.html">Binary</a>
+              <a href="./bitwise-and.html">AND</a>
+              <a href="./bitwise-or.html">OR</a>
+              <a href="./bitwise-not.html">NOT</a>
+              <a href="./bitwise-xor.html">XOR</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Crib Dragging</h1>
+      <p class="subtitle">
+        When two messages are encrypted with the <em>same</em> key, XORing the
+        ciphertexts cancels the key and leaves P₁&nbsp;⊕&nbsp;P₂. Drag a
+        known word — a <em>crib</em> — through that XOR to reveal fragments of
+        both plaintexts. This is how Soviet OTP reuse was exploited.
+      </p>
+
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <label for="msg1">Message 1</label>
+            <textarea id="msg1" rows="2" spellcheck="false">Attack at dawn tomorrow</textarea>
+          </div>
+          <div>
+            <label for="msg2">Message 2</label>
+            <textarea id="msg2" rows="2" spellcheck="false">Retreat to safe house now</textarea>
+          </div>
+        </div>
+        <div class="control-row" style="margin-top: 1rem; gap: 0.6rem; flex-wrap: wrap;">
+          <button id="setup-btn" class="primary">Encrypt both with the same key</button>
+        </div>
+        <div style="margin-top: 0.9rem;">
+          <div class="label" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-dim);">Shared key (secret)</div>
+          <div id="key-display" class="hex-display key-hex-display" style="margin-top: 0.3rem;"></div>
+        </div>
+      </section>
+
+      <section id="cipher-section" hidden>
+        <h2>Intercepted ciphertexts</h2>
+        <p class="subtitle">
+          An eavesdropper captures both of these. Neither reveals anything on
+          its own — but XORing them together cancels the key entirely.
+        </p>
+        <div class="intercept-grid">
+          <div class="intercept-box cipher">
+            <div class="intercept-label">C₁ (Message 1 encrypted)</div>
+            <div id="c1-display" class="hex-display"></div>
+          </div>
+          <div class="intercept-box cipher">
+            <div class="intercept-label">C₂ (Message 2 encrypted)</div>
+            <div id="c2-display" class="hex-display"></div>
+          </div>
+          <div class="intercept-box xor-result">
+            <div class="intercept-label">C₁ ⊕ C₂ = P₁ ⊕ P₂ &nbsp;<span style="font-weight:400; color: var(--c-dim);">(key cancels — this is what the attacker works with)</span></div>
+            <div id="xor-display" class="hex-display xor-hex-display"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="crib-section" hidden>
+        <h2>Drag the crib</h2>
+        <p class="subtitle">
+          Type a word you expect in one of the messages. Use the controls — or
+          click any byte, drag the slider, or press ← → — to slide the crib
+          along P₁&nbsp;⊕&nbsp;P₂. The result row shows what each position
+          decodes to, scored by its <strong>letter-and-space ratio</strong>.
+          English prose scores 85–100%; random bytes average ~55%.
+        </p>
+
+        <div class="panel">
+          <div class="control-row" style="gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.1rem;">
+            <label for="crib-input" style="white-space: nowrap; align-self: center; margin-bottom: 0;">Crib word</label>
+            <input id="crib-input" type="text" value="at dawn" spellcheck="false"
+              autocomplete="off" style="width: 14rem;" />
+          </div>
+
+          <!-- ── Visual drag panel ──────────────────────────────────────── -->
+          <div class="drag-visual" id="drag-visual" tabindex="0"
+               title="Click a byte to jump there · Arrow keys to step · Drag the slider">
+            <div class="dv-row">
+              <span class="dv-label">P₁⊕P₂</span>
+              <div class="dv-cells" id="dv-xor-cells"></div>
+            </div>
+            <div class="dv-row">
+              <span class="dv-label">Crib</span>
+              <div class="dv-cells" id="dv-crib-cells"></div>
+            </div>
+            <div class="dv-row">
+              <span class="dv-label">Result</span>
+              <div class="dv-cells" id="dv-result-cells"></div>
+            </div>
+          </div>
+
+          <!-- ── Navigation ─────────────────────────────────────────────── -->
+          <div class="drag-nav">
+            <button id="prev-btn" class="drag-nav-btn" disabled title="Previous (←)">◀</button>
+            <input id="pos-slider" type="range" min="0" max="0" value="0" class="drag-slider" />
+            <button id="next-btn" class="drag-nav-btn" title="Next (→)">▶</button>
+            <div class="drag-meta">
+              <code id="pos-label" class="drag-pos-label"></code>
+              <span id="match-badge" class="crib-badge" hidden></span>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin: 1.75rem 0 0.3rem; font-size: 0.72rem; text-transform: uppercase;
+                  letter-spacing: 0.07em; color: var(--c-dim);">All positions — sorted by score</p>
+        <div class="crib-header">
+          <span class="cr-pos">Pos</span>
+          <span class="cr-crib-hex">Crib (hex)</span>
+          <span class="cr-arrow"></span>
+          <span class="cr-xor-hex">⊕ window</span>
+          <span class="cr-arrow"></span>
+          <span class="cr-cand-str">Candidate</span>
+          <span class="cr-cand-hex"></span>
+          <span class="cr-score">Score</span>
+          <span></span>
+        </div>
+        <div id="drag-results" class="crib-results"></div>
+      </section>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          The attack relies on a single property of XOR:
+          <code>(P ⊕ K) ⊕ (Q ⊕ K) = P ⊕ Q</code>. The key vanishes. What
+          remains is the XOR of the two plaintexts — a much weaker object than
+          either ciphertext alone.
+        </p>
+        <p>
+          Natural language is highly redundant. Common words like
+          <em>the</em>, <em>attack</em>, <em>at dawn</em> appear predictably.
+          Sliding such a crib through P₁&nbsp;⊕&nbsp;P₂ and scoring the
+          output by its <em>letter-and-space ratio</em> quickly separates
+          genuine matches (≥ 85% letters+spaces) from accidental printable
+          garbage (~55% on average). Non-printable output is an instant
+          discard. The longer the crib, the fewer false positives survive.
+        </p>
+        <p>
+          Once a fragment is confirmed, it becomes a new crib. A skilled
+          analyst can bootstrap from a single known word to full plaintext
+          recovery — exactly the technique Soviet signals intelligence suffered
+          when key material was reused under pressure during WWII.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          The defence is absolute: <strong>never reuse a one-time pad key</strong>.
+          A key used twice is no longer a one-time pad — it is just an
+          unkeyed XOR.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+  </body>
+</html>
