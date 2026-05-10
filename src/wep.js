@@ -111,41 +111,48 @@ function renderStatus() {
   }).join('');
 }
 
+// Render bytes as ASCII — non-printable shown as ·
+function ptChars(bytes) {
+  return Array.from(bytes).map(b => b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : '·').join('');
+}
+
 // ── Collision handler ──────────────────────────────────────────────────────
 function onCollision() {
   const { a, b, iv } = collisionPair;
-  const xorCt = xorBytes(a.ciphertext, b.ciphertext);
+  const xorCt = xorBytes(a.ciphertext, b.ciphertext);   // C_A ⊕ C_B = P_A ⊕ P_B
 
   document.getElementById('collision-section').hidden = false;
-
-  document.getElementById('col-iv').textContent = toHex(iv);
+  document.getElementById('col-iv').textContent   = toHex(iv);
   document.getElementById('col-pkts').textContent = packetCount.toLocaleString();
   document.getElementById('col-a-ct').textContent = hexSpaced(toHex(a.ciphertext));
   document.getElementById('col-b-ct').textContent = hexSpaced(toHex(b.ciphertext));
   document.getElementById('col-xor-ct').textContent = hexSpaced(toHex(xorCt));
 
-  // Apply LLC/SNAP crib at position 0
-  const crib = LLC_SNAP;
-  const cribResult = xorBytes(xorCt.slice(0, crib.length), crib);
+  // ── Known-plaintext recovery: use P_A as the crib ────────────────────────
+  // Both packets have the same LLC/SNAP header so (P_A ⊕ P_B)[0:6] = 0 —
+  // XOR-ing only LLC/SNAP back gives the same non-printable bytes.
+  // Instead, use the full known plaintext of packet A as the crib:
+  //   P_A ⊕ (P_A ⊕ P_B) = P_B  — the entire payload of B is revealed.
+  const aPt = makePayload(a.payloadIdx);
+  const bPt = makePayload(b.payloadIdx);
+  const len  = Math.min(aPt.length, xorCt.length);
+  const recoveredB = xorBytes(xorCt.slice(0, len), aPt.slice(0, len));
 
   document.getElementById('crib-section2').hidden = false;
-  document.getElementById('crib-crib').textContent = toHex(crib);
-  document.getElementById('crib-crib-str').textContent =
-    Array.from(crib).map(b => b.toString(16).padStart(2,'0').toUpperCase()).join(' ');
-  document.getElementById('crib-result-hex').textContent = toHex(cribResult);
-  document.getElementById('crib-result-str').textContent =
-    Array.from(cribResult).map(b => b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : '·').join('');
-  // LLC/SNAP crib contains non-printable bytes (0xAA, 0x03, 0x00) so printableScore
-  // is meaningless here — the crib always matches by construction (same header on every frame)
-  document.getElementById('crib-score').textContent = 'match';
+  document.getElementById('kp-a-hex').textContent  = hexSpaced(toHex(aPt));
+  document.getElementById('kp-a-str').textContent  = ptChars(aPt);
+  document.getElementById('kp-xor-hex').textContent = hexSpaced(toHex(xorCt.slice(0, len)));
+  document.getElementById('kp-b-hex').textContent  = hexSpaced(toHex(recoveredB));
+  document.getElementById('kp-b-str').textContent  = ptChars(recoveredB);
+  // Badge: show the readable payload text we just recovered (bytes 6+)
+  document.getElementById('kp-badge').textContent  = `"${PAYLOADS[b.payloadIdx]}"`;
 
-  // Reveal actual plaintext for comparison
-  document.getElementById('col-a-pt').textContent =
-    Array.from(makePayload(a.payloadIdx)).map(b => b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : `\\x${b.toString(16).padStart(2,'0')}`).join('');
-  document.getElementById('col-b-pt').textContent =
-    Array.from(makePayload(b.payloadIdx)).map(b => b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : `\\x${b.toString(16).padStart(2,'0')}`).join('');
-
+  // ── Ground truth: display both actual plaintexts in consistent format ─────
   document.getElementById('reveal-section').hidden = false;
+  document.getElementById('col-a-hex').textContent = hexSpaced(toHex(aPt));
+  document.getElementById('col-a-str').textContent = ptChars(aPt);
+  document.getElementById('col-b-hex').textContent = hexSpaced(toHex(bPt));
+  document.getElementById('col-b-str').textContent = ptChars(bPt);
 
   document.getElementById('capture-btn').textContent = 'Reset';
   document.getElementById('capture-btn').classList.remove('primary');

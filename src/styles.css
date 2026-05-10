@@ -1314,6 +1314,11 @@ footer.site-footer {
 .c2-label { font-size: 0.8rem; color: var(--c-dim); font-family: var(--font-sans); }
 .c2-note  { font-size: 0.75rem; color: var(--c-dim); font-family: var(--font-sans); }
 
+/* Known-plaintext recovery: stacked hex + chars inside a grid cell */
+.kp-pair  { display: flex; flex-direction: column; gap: 0.15rem; }
+.kp-chars { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.05em; }
+.pt-chars { font-family: var(--font-mono); font-size: 0.88rem; letter-spacing: 0.04em; margin-top: 0.3rem; }
+
 @media (max-width: 600px) {
   .key-structure-diagram { flex-direction: column; align-items: flex-start; }
   .col-row   { grid-template-columns: 1fr; }

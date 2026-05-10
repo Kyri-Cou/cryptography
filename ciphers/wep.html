@@ -181,46 +181,62 @@
       </section>
 
       <section id="crib-section2" hidden>
-        <h2>Apply the LLC/SNAP crib</h2>
+        <h2>Known-plaintext recovery</h2>
         <p class="subtitle">
-          Every 802.11 data frame begins with an 8-byte LLC/SNAP header
-          <code>AA AA 03 00 00 00</code>. Using those 6 known bytes as a crib
-          at position 0 immediately reveals the first 6 bytes of the
-          <em>other</em> packet's plaintext.
+          Every 802.11 data frame starts with the 6-byte LLC/SNAP header
+          <code>AA AA 03 00 00 00</code>. Standard network traffic —
+          ARP, DHCP, DNS, HTTP — is highly predictable, so an attacker can
+          often reconstruct the full plaintext of packet A. XOR-ing that
+          known plaintext with P<sub>A</sub>&nbsp;⊕&nbsp;P<sub>B</sub>
+          directly yields packet B's complete payload.
         </p>
         <div class="panel">
           <div class="crib2-grid">
             <div class="c2-row">
-              <span class="c2-label">Crib (LLC/SNAP)</span>
-              <code id="crib-crib" class="c2-val key-val"></code>
-              <span class="c2-note" id="crib-crib-str"></span>
+              <span class="c2-label">P<sub>A</sub> — known plaintext (crib)</span>
+              <div class="kp-pair">
+                <code id="kp-a-hex" class="c2-val key-val"></code>
+                <code id="kp-a-str" class="kp-chars key-val"></code>
+              </div>
+              <span></span>
             </div>
             <div class="c2-row">
-              <span class="c2-label">P<sub>A</sub> ⊕ P<sub>B</sub> (first 6 bytes)</span>
-              <code id="crib-result-hex" class="c2-val xor-val"></code>
+              <span class="c2-label">⊕ P<sub>A</sub> ⊕ P<sub>B</sub></span>
+              <code id="kp-xor-hex" class="c2-val xor-val"></code>
+              <span></span>
             </div>
             <div class="c2-row">
-              <span class="c2-label">crib ⊕ window → candidate</span>
-              <code id="crib-result-str" class="c2-val plain-val"></code>
-              <span id="crib-score" class="crib-badge hit"></span>
+              <span class="c2-label">= Recovered P<sub>B</sub></span>
+              <div class="kp-pair">
+                <code id="kp-b-hex" class="c2-val plain-val"></code>
+                <code id="kp-b-str" class="kp-chars plain-val"></code>
+              </div>
+              <span id="kp-badge" class="crib-badge hit"></span>
             </div>
           </div>
+          <p style="margin: 0.65rem 0 0; font-size: 0.8rem; color: var(--c-dim);">
+            Bytes 0–5 are the LLC/SNAP header — non-printable, shown as&nbsp;<code>·</code>.
+            Bytes 6+ are the recovered payload — compare with Ground truth below.
+          </p>
         </div>
       </section>
 
       <section id="reveal-section" hidden>
         <h2>Ground truth</h2>
         <p class="subtitle">
-          The actual payloads — confirming the attack recovered the correct bytes.
+          The actual plaintexts — verify that the recovered payload matches
+          packet B exactly.
         </p>
         <div class="intercept-grid">
           <div class="intercept-box plain">
-            <div class="intercept-label">Packet A plaintext</div>
-            <div id="col-a-pt" class="hex-display plain-hex-display"></div>
+            <div class="intercept-label">Packet A plaintext (used as crib)</div>
+            <code id="col-a-hex" class="hex-display key-val" style="font-size:0.78rem;"></code>
+            <div id="col-a-str" class="pt-chars plain-val"></div>
           </div>
           <div class="intercept-box plain">
-            <div class="intercept-label">Packet B plaintext</div>
-            <div id="col-b-pt" class="hex-display plain-hex-display"></div>
+            <div class="intercept-label">Packet B plaintext (what we recovered)</div>
+            <code id="col-b-hex" class="hex-display plain-hex-display" style="font-size:0.78rem;"></code>
+            <div id="col-b-str" class="pt-chars plain-val"></div>
           </div>
         </div>
       </section>
