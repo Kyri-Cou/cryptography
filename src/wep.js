@@ -1,5 +1,5 @@
 import './nav.js';
-import { rc4, xorBytes, toHex, printableScore, hexSpaced } from './rc4.js';
+import { rc4, xorBytes, toHex, hexSpaced } from './rc4.js';
 
 const enc = new TextEncoder();
 
@@ -12,6 +12,7 @@ const IV_SPACE = 1 << 24;  // 2^24 = 16,777,216
 // ── Simulation state ───────────────────────────────────────────────────────
 let secretKey = null;
 let ivsSeen = new Map();         // iv24 → { ivBytes, ciphertext, payloadIdx }
+let recentPackets = [];          // ring buffer — last 6 packets for display only
 let packetCount = 0;
 let running = false;
 let rafId = null;
@@ -75,6 +76,8 @@ function simulate() {
     } else {
       ivsSeen.set(iv.int, packet);
     }
+    recentPackets.push(packet);
+    if (recentPackets.length > 6) recentPackets.shift();
     packetCount++;
   }
 
@@ -95,10 +98,9 @@ function renderStatus() {
   document.getElementById('prob-bar').style.width = (prob * 100).toFixed(1) + '%';
   document.getElementById('prob-pct').textContent = (prob * 100).toFixed(1) + '%';
 
-  // Show last few packets (most recent first)
-  const recent = [...ivsSeen.entries()].slice(-6).reverse();
+  // Show last few packets (most recent first) — use ring buffer, not the full Map
   const list = document.getElementById('packet-list');
-  list.innerHTML = recent.map(([ivInt, pkt]) => {
+  list.innerHTML = [...recentPackets].reverse().map(pkt => {
     const ivHex = toHex(pkt.ivBytes);
     const ctHex = toHex(pkt.ciphertext.slice(0, 6)) + '…';
     return `<div class="pkt-row">
@@ -113,8 +115,6 @@ function renderStatus() {
 function onCollision() {
   const { a, b, iv } = collisionPair;
   const xorCt = xorBytes(a.ciphertext, b.ciphertext);
-  // XOR of ciphertexts = XOR of plaintexts (keystream cancels)
-  const xorPt = xorBytes(makePayload(a.payloadIdx), makePayload(b.payloadIdx));
 
   document.getElementById('collision-section').hidden = false;
 
@@ -127,7 +127,6 @@ function onCollision() {
   // Apply LLC/SNAP crib at position 0
   const crib = LLC_SNAP;
   const cribResult = xorBytes(xorCt.slice(0, crib.length), crib);
-  const cribScore = printableScore(cribResult);
 
   document.getElementById('crib-section2').hidden = false;
   document.getElementById('crib-crib').textContent = toHex(crib);
@@ -136,7 +135,9 @@ function onCollision() {
   document.getElementById('crib-result-hex').textContent = toHex(cribResult);
   document.getElementById('crib-result-str').textContent =
     Array.from(cribResult).map(b => b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : '·').join('');
-  document.getElementById('crib-score').textContent = Math.round(cribScore * 100) + '%';
+  // LLC/SNAP crib contains non-printable bytes (0xAA, 0x03, 0x00) so printableScore
+  // is meaningless here — the crib always matches by construction (same header on every frame)
+  document.getElementById('crib-score').textContent = 'match';
 
   // Reveal actual plaintext for comparison
   document.getElementById('col-a-pt').textContent =
@@ -155,6 +156,7 @@ function startCapture() {
   // Reset
   cancelAnimationFrame(rafId);
   ivsSeen.clear();
+  recentPackets = [];
   packetCount = 0;
   collisionPair = null;
   running = true;

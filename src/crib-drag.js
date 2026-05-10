@@ -47,7 +47,10 @@ function dragCrib() {
   if (!XOR12) return;
 
   const cribStr = document.getElementById('crib-input').value;
-  if (!cribStr.trim()) return;
+  if (!cribStr.trim()) {
+    document.getElementById('drag-results').innerHTML = '';
+    return;
+  }
   const crib = enc.encode(cribStr);
 
   const rows = [];
