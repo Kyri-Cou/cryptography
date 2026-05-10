@@ -122,15 +122,16 @@
       <section id="crib-section" hidden>
         <h2>Drag the crib</h2>
         <p class="subtitle">
-          Type a word you expect to appear in one of the messages. At each
-          byte offset the tool computes <code>crib ⊕ (P₁⊕P₂)</code> — if the
-          result looks like English text, the crib landed in one message and
-          the output reveals the matching bytes of the <em>other</em>.
+          Type a word or phrase you expect to appear in one of the messages.
+          At each byte offset the tool computes <code>crib ⊕ (P₁⊕P₂)</code>
+          and scores the result by its <strong>letter-and-space ratio</strong> —
+          English prose runs 85–100%; random bytes average ~55%.
+          Rows with non-printable output are faded out. Green rows are genuine matches.
         </p>
         <div class="panel">
           <div class="control-row" style="gap: 0.6rem; flex-wrap: wrap;">
             <label for="crib-input" style="white-space: nowrap; align-self: center;">Try the word</label>
-            <input id="crib-input" type="text" value="at" spellcheck="false"
+            <input id="crib-input" type="text" value="at dawn" spellcheck="false"
               autocomplete="off" style="width: 12rem;" />
             <button id="drag-btn">Drag</button>
           </div>
@@ -160,10 +161,12 @@
         </p>
         <p>
           Natural language is highly redundant. Common words like
-          <em>the</em>, <em>and</em>, <em>attack</em> appear predictably.
-          Sliding such a crib through P₁&nbsp;⊕&nbsp;P₂ and checking whether
-          the output is printable ASCII quickly locates the word in one message
-          and reveals the corresponding bytes of the other.
+          <em>the</em>, <em>attack</em>, <em>at dawn</em> appear predictably.
+          Sliding such a crib through P₁&nbsp;⊕&nbsp;P₂ and scoring the
+          output by its <em>letter-and-space ratio</em> quickly separates
+          genuine matches (≥ 85% letters+spaces) from accidental printable
+          garbage (~55% on average). Non-printable output is an instant
+          discard. The longer the crib, the fewer false positives survive.
         </p>
         <p>
           Once a fragment is confirmed, it becomes a new crib. A skilled

@@ -1186,6 +1186,9 @@ footer.site-footer {
   border-radius: 5px;
   transition: border-color 80ms ease;
 }
+.crib-row.crib-dead {
+  opacity: 0.3;
+}
 .crib-row.crib-warm {
   border-color: rgba(210, 152, 34, 0.5);
   background: rgba(210, 152, 34, 0.07);

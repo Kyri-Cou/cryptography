@@ -1,5 +1,5 @@
 import './nav.js';
-import { xorBytes, toHex, printableScore, hexSpaced } from './rc4.js';
+import { xorBytes, toHex, hexSpaced } from './rc4.js';
 
 const enc = new TextEncoder();
 
@@ -42,6 +42,18 @@ function setup() {
   dragCrib();
 }
 
+// ── Scoring ────────────────────────────────────────────────────────────────
+// Returns -1 if any byte is non-printable (hard fail).
+// Otherwise returns fraction of bytes that are ASCII letters or space [0, 1].
+// English prose typically scores 0.85–1.0; random printable bytes average ~0.55.
+function textScore(bytes) {
+  for (const b of bytes) if (b < 0x20 || b > 0x7e) return -1;
+  const letterSpace = bytes.filter(
+    b => (b >= 0x41 && b <= 0x5a) || (b >= 0x61 && b <= 0x7a) || b === 0x20
+  ).length;
+  return letterSpace / bytes.length;
+}
+
 // ── Crib drag ──────────────────────────────────────────────────────────────
 function dragCrib() {
   if (!XOR12) return;
@@ -57,17 +69,17 @@ function dragCrib() {
   for (let pos = 0; pos <= XOR12.length - crib.length; pos++) {
     const window = XOR12.slice(pos, pos + crib.length);
     const candidate = xorBytes(window, crib);
-    const score = printableScore(candidate);
+    const score = textScore(candidate);
     rows.push({ pos, candidate, score });
   }
 
-  // Sort: best matches first
+  // Best letter-space score first; non-printable (-1) sink to the bottom
   rows.sort((a, b) => b.score - a.score || a.pos - b.pos);
 
   renderResults(rows, crib);
 }
 
-function printable(b) {
+function charDisplay(b) {
   return b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : '·';
 }
 
@@ -81,18 +93,27 @@ function renderResults(rows, crib) {
   }
 
   container.innerHTML = rows.map(({ pos, candidate, score }) => {
-    const pct = Math.round(score * 100);
-    const candStr = Array.from(candidate).map(printable).join('');
+    const candStr = Array.from(candidate).map(charDisplay).join('');
     const candHex = toHex(candidate);
 
     let cls = 'crib-row';
     let badge = '';
-    if (score === 1) {
-      cls += ' crib-hit';
-      badge = '<span class="crib-badge hit">match</span>';
-    } else if (score >= 0.6) {
-      cls += ' crib-warm';
-      badge = '<span class="crib-badge warm">possible</span>';
+    let scoreLabel = '';
+
+    if (score < 0) {
+      // Contains non-printable bytes — definitely not English
+      cls += ' crib-dead';
+      scoreLabel = '✗';
+    } else {
+      const pct = Math.round(score * 100);
+      scoreLabel = pct + '%';
+      if (score >= 0.75) {
+        cls += ' crib-hit';
+        badge = '<span class="crib-badge hit">match</span>';
+      } else if (score >= 0.55) {
+        cls += ' crib-warm';
+        badge = '<span class="crib-badge warm">possible</span>';
+      }
     }
 
     return `<div class="${cls}">
@@ -103,7 +124,7 @@ function renderResults(rows, crib) {
       <span class="cr-arrow">→</span>
       <span class="cr-cand-str">${candStr}</span>
       <span class="cr-cand-hex">${candHex}</span>
-      <span class="cr-score">${pct}%</span>
+      <span class="cr-score">${scoreLabel}</span>
       ${badge}
     </div>`;
   }).join('');
