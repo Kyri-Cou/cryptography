@@ -1228,15 +1228,18 @@ footer.site-footer {
 
 /* ── Crib drag visual panel ───────────────────────────────────────────────── */
 
-/* Scrollable container for the three aligned rows */
+/* Scrollable container for the three aligned rows.
+   Scrollbar is hidden — the slider + buttons are the navigation surface. */
 .drag-visual {
   overflow-x: auto;
+  scrollbar-width: none;    /* Firefox */
   margin-top: 0.5rem;
   margin-bottom: 0.25rem;
-  padding-bottom: 2px;      /* avoid clipping outlines */
-  outline: none;            /* custom focus style below */
+  padding-bottom: 2px;
+  outline: none;
   border-radius: 4px;
 }
+.drag-visual::-webkit-scrollbar { display: none; }  /* Chrome / Safari */
 .drag-visual:focus-visible {
   box-shadow: 0 0 0 2px var(--c-sub);
 }
@@ -1269,7 +1272,7 @@ footer.site-footer {
 
 /* Each byte cell — base style (P₁⊕P₂ row) */
 .dv-byte {
-  width: 34px;
+  width: 28px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -1357,7 +1360,7 @@ footer.site-footer {
 
 /* Ghost cells — take up the same space, invisible */
 .dv-ghost {
-  width: 34px;
+  width: 28px;
   flex-shrink: 0;
   background: transparent;
   border-color: transparent;
@@ -1385,19 +1388,32 @@ footer.site-footer {
   accent-color: var(--c-warn);
 }
 
+/* Fixed-width block holding position label + score badge.
+   min-width reserves enough room for the longest possible content so that
+   changes to the badge text never cause the slider to shift width. */
+.drag-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 12rem;
+  flex-shrink: 0;
+}
+
 .drag-pos-label {
   font-family: var(--font-mono);
   font-size: 0.82rem;
   color: var(--c-dim);
   white-space: nowrap;
+  min-width: 3.8rem;   /* "16 / 16" never shifts the badge */
 }
 
 @media (max-width: 600px) {
-  .dv-byte, .dv-ghost { width: 26px; }
-  .dv-label { width: 3.8rem; font-size: 0.62rem; }
-  .dv-hex   { font-size: 0.6rem; }
-  .dv-ch    { font-size: 0.56rem; }
-  .dv-ch-big { font-size: 0.78rem; }
+  .dv-byte, .dv-ghost { width: 22px; }
+  .dv-label  { width: 3.4rem; font-size: 0.6rem; }
+  .dv-hex    { font-size: 0.56rem; }
+  .dv-ch     { font-size: 0.52rem; }
+  .dv-ch-big { font-size: 0.72rem; }
+  .drag-meta { min-width: 9rem; }
 }
 
 /* ── WEP page ─────────────────────────────────────────────────────────────── */
