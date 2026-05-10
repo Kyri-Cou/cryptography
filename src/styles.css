@@ -1221,6 +1221,201 @@ footer.site-footer {
   .cr-xor-hex, .cr-cand-hex, .cr-arrow { display: none; }
 }
 
+.crib-row.active-pos {
+  outline: 1px solid var(--c-sub);
+  outline-offset: -1px;
+}
+
+/* ── Crib drag visual panel ───────────────────────────────────────────────── */
+
+/* Scrollable container for the three aligned rows.
+   Scrollbar is hidden — the slider + buttons are the navigation surface. */
+.drag-visual {
+  overflow-x: auto;
+  scrollbar-width: none;    /* Firefox */
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+  padding-bottom: 2px;
+  outline: none;
+  border-radius: 4px;
+}
+.drag-visual::-webkit-scrollbar { display: none; }  /* Chrome / Safari */
+.drag-visual:focus-visible {
+  box-shadow: 0 0 0 2px var(--c-sub);
+}
+
+.dv-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 3px;
+  min-width: max-content;   /* keep rows full-width within the scroll zone */
+}
+
+.dv-label {
+  width: 4.8rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--c-dim);
+  padding-right: 0.5rem;
+  white-space: nowrap;
+}
+
+.dv-cells {
+  display: flex;
+  gap: 3px;
+}
+
+/* Each byte cell — base style (P₁⊕P₂ row) */
+.dv-byte {
+  width: 28px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 0 2px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  border: 1px solid transparent;
+  transition: background 80ms ease, border-color 80ms ease;
+  line-height: 1;
+}
+
+.dv-hex {
+  font-size: 0.68rem;
+  color: var(--c-dim);
+  line-height: 1.25;
+}
+
+.dv-ch {
+  font-size: 0.62rem;
+  color: var(--c-dim);
+  line-height: 1.15;
+}
+
+.dv-ch-big {
+  font-size: 0.92rem;
+  line-height: 1.2;
+}
+
+/* P₁⊕P₂ cells */
+.dv-xor {
+  background: var(--c-bg);
+  border-color: var(--c-border);
+  cursor: pointer;
+}
+.dv-xor:hover {
+  border-color: var(--c-sub);
+}
+.dv-xor .dv-hex { color: var(--c-warn); }
+
+/* Active window highlight on the XOR row */
+.dv-xor.dv-active {
+  background: rgba(210, 152, 34, 0.12);
+  border-color: rgba(210, 152, 34, 0.5);
+}
+.dv-xor.dv-active .dv-hex { color: var(--c-warn); }
+
+/* Crib cells */
+.dv-crib {
+  background: rgba(210, 168, 255, 0.1);
+  border-color: rgba(210, 168, 255, 0.4);
+}
+.dv-crib .dv-ch-big { color: var(--c-key); }
+.dv-crib .dv-hex    { color: rgba(210, 168, 255, 0.6); }
+
+/* Result cells — default (low score / printable) */
+.dv-result {
+  background: var(--c-bg);
+  border-color: var(--c-border);
+}
+.dv-result .dv-ch-big { color: var(--c-dim); }
+.dv-result .dv-hex    { color: var(--c-dim); font-size: 0.58rem; }
+
+/* Result — hit */
+.dv-result.dv-hit {
+  background: rgba(63, 185, 80, 0.1);
+  border-color: rgba(63, 185, 80, 0.5);
+}
+.dv-result.dv-hit .dv-ch-big { color: var(--c-plain); }
+.dv-result.dv-hit .dv-hex    { color: rgba(63, 185, 80, 0.6); }
+
+/* Result — warm */
+.dv-result.dv-warm {
+  background: rgba(210, 152, 34, 0.1);
+  border-color: rgba(210, 152, 34, 0.4);
+}
+.dv-result.dv-warm .dv-ch-big { color: var(--c-warn); }
+.dv-result.dv-warm .dv-hex    { color: rgba(210, 152, 34, 0.6); }
+
+/* Result — dead (non-printable) */
+.dv-result.dv-dead {
+  opacity: 0.35;
+}
+
+/* Ghost cells — take up the same space, invisible */
+.dv-ghost {
+  width: 28px;
+  flex-shrink: 0;
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Navigation bar */
+.drag-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.drag-nav-btn {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1;
+  min-width: 2.2rem;
+}
+
+.drag-slider {
+  flex: 1;
+  min-width: 6rem;
+  accent-color: var(--c-warn);
+}
+
+/* Fixed-width block holding position label + score badge.
+   min-width reserves enough room for the longest possible content so that
+   changes to the badge text never cause the slider to shift width. */
+.drag-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 12rem;
+  flex-shrink: 0;
+}
+
+.drag-pos-label {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--c-dim);
+  white-space: nowrap;
+  min-width: 3.8rem;   /* "16 / 16" never shifts the badge */
+}
+
+@media (max-width: 600px) {
+  .dv-byte, .dv-ghost { width: 22px; }
+  .dv-label  { width: 3.4rem; font-size: 0.6rem; }
+  .dv-hex    { font-size: 0.56rem; }
+  .dv-ch     { font-size: 0.52rem; }
+  .dv-ch-big { font-size: 0.72rem; }
+  .drag-meta { min-width: 9rem; }
+}
+
 /* ── WEP page ─────────────────────────────────────────────────────────────── */
 .key-structure-diagram {
   display: flex;
