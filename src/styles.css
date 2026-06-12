@@ -1584,3 +1584,153 @@ footer.site-footer {
   .seed-diagram     { flex-direction: column; align-items: stretch; }
   .found-row        { grid-template-columns: 1fr; }
 }
+
+/* ── S-DES page ───────────────────────────────────────────────────────────── */
+
+/* Compact bit cells — ten of them (plus labels) must fit one row */
+.sd-bit { width: 40px; height: 44px; }
+.sd-bit .bv { font-size: 1.15rem; }
+
+/* Role colouring on top of the shared .bit-cell b0/b1 states.
+   plain (green) falls through to the default .b1 styling. */
+.bit-cell.role-key.b1 {
+  background: rgba(210, 168, 255, 0.12);
+  border-color: var(--c-key);
+  color: var(--c-key);
+}
+.bit-cell.role-algo.b1 {
+  background: rgba(121, 192, 255, 0.12);
+  border-color: var(--c-algo);
+  color: var(--c-algo);
+}
+.bit-cell.role-cipher.b1 {
+  background: rgba(255, 123, 114, 0.12);
+  border-color: var(--c-cipher);
+  color: var(--c-cipher);
+}
+
+/* A bit row with optional caption, gold source labels, dim position labels */
+.sd-group { display: inline-flex; flex-direction: column; }
+.sd-cap {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--c-dim);
+  margin-bottom: 0.25rem;
+}
+.sd-cap.hl-key { color: var(--c-key); font-weight: 700; }
+.sd-lbl-row { display: flex; gap: 3px; }
+.sd-src, .sd-pos {
+  width: 40px;
+  flex-shrink: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+.sd-src { color: var(--c-heading); }
+.sd-pos { color: var(--c-dim); }
+.sd-cells { display: flex; gap: 3px; }
+.sd-halves { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.sd-input-row { margin-top: 0.25rem; overflow-x: auto; padding-bottom: 2px; }
+
+/* Pipeline stage: name + note on the left, bit rows on the right */
+.sd-stage {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-top: 1.25rem;
+}
+.sd-stage:first-child { margin-top: 0.25rem; }
+.sd-stage-label { width: 9rem; flex-shrink: 0; padding-top: 0.35rem; }
+.sd-stage-name {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--c-sub);
+}
+.sd-stage-note { font-size: 0.75rem; color: var(--c-dim); margin-top: 0.15rem; }
+.sd-stage-body { overflow-x: auto; padding-bottom: 2px; }
+
+/* Aligned XOR rows with an operator gutter */
+.sd-xstack { display: flex; flex-direction: column; gap: 4px; }
+.sd-xrow { display: flex; align-items: center; gap: 0.5rem; }
+.sd-xop {
+  width: 1.1rem;
+  flex-shrink: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  color: var(--c-dim);
+}
+.sd-xlabel {
+  width: 4.5rem;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--c-dim);
+}
+.sd-xline { height: 1px; background: var(--c-border); margin: 2px 0 2px 1.6rem; }
+
+/* S-box lookup tables */
+.sd-sboxes { display: flex; gap: 2rem; flex-wrap: wrap; align-items: flex-start; }
+.sbox-title {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--c-heading);
+  margin-bottom: 0.35rem;
+}
+.sbox-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 34px);
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+.sbox-grid > div {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+}
+.sbox-head { color: var(--c-dim); }
+.sbox-head.hl { color: var(--c-key); font-weight: 700; }
+.sbox-cell {
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  color: var(--c-text);
+}
+.sbox-cell.hl-row, .sbox-cell.hl-col {
+  background: rgba(210, 168, 255, 0.14);
+  border-color: rgba(210, 168, 255, 0.5);
+}
+.sbox-cell.hl-cell {
+  background: rgba(255, 123, 114, 0.2);
+  border-color: var(--c-cipher);
+  color: var(--c-cipher);
+  font-weight: 700;
+}
+.sbox-cap {
+  font-size: 0.72rem;
+  color: var(--c-dim);
+  margin-top: 0.4rem;
+  max-width: 190px;
+}
+
+/* Round panels and pipeline spacing */
+.sd-pipeline > .panel { margin-top: 1rem; }
+.sd-round-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  color: var(--c-heading);
+}
+.sd-note { font-size: 0.8rem; color: var(--c-dim); margin: 1rem 0 0; }
+
+@media (max-width: 640px) {
+  .sd-bit { width: 30px; height: 36px; }
+  .sd-bit .bv { font-size: 0.95rem; }
+  .sd-src, .sd-pos { width: 30px; }
+  .sd-stage { flex-direction: column; gap: 0.5rem; }
+  .sd-stage-label { width: auto; padding-top: 0; }
+  .sd-halves { gap: 0.9rem; }
+  .sd-sboxes { gap: 1.25rem; }
+}

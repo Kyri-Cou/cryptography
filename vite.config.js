@@ -25,6 +25,7 @@ export default defineConfig({
         cribDrag:     resolve(__dirname, 'ciphers/crib-drag.html'),
         wep:          resolve(__dirname, 'ciphers/wep.html'),
         prngAbuse:    resolve(__dirname, 'ciphers/prng-abuse.html'),
+        sdes:         resolve(__dirname, 'ciphers/sdes.html'),
       },
     },
   },

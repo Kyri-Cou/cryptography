@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>S-DES · Cryptography Visualisations</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vernam</summary>
+            <div class="nav-menu">
+              <a href="./vernam.html">Cipher</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Symmetric Encryption</summary>
+            <div class="nav-menu">
+              <a href="./sdes.html">S-DES</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Attacks</summary>
+            <div class="nav-menu">
+              <a href="./crib-drag.html">Crib Drag</a>
+              <a href="./wep.html">WEP</a>
+              <a href="./prng-abuse.html">Weak PRNG</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Bits</summary>
+            <div class="nav-menu">
+              <a href="./binary.html">Binary</a>
+              <a href="./bitwise-and.html">AND</a>
+              <a href="./bitwise-or.html">OR</a>
+              <a href="./bitwise-not.html">NOT</a>
+              <a href="./bitwise-xor.html">XOR</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">S-DES — Simplified DES</h1>
+      <p class="subtitle">
+        The teaching version of the Data Encryption Standard: an 8-bit block,
+        a 10-bit key, and two Feistel rounds — small enough to follow every
+        bit by hand. Toggle any bit below and the whole pipeline updates.
+        The gold numbers above a row show where each bit came from.
+      </p>
+
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <label id="in-title">Plaintext (8 bits)</label>
+            <div id="in-bits" class="sd-input-row"></div>
+            <p class="hint">Click a bit to toggle it.</p>
+          </div>
+          <div>
+            <label>Key (10 bits)</label>
+            <div id="key-bits" class="sd-input-row"></div>
+            <p class="hint">Click a bit to toggle it.</p>
+          </div>
+        </div>
+        <div class="control-row" style="margin-top: 1rem;">
+          <button id="mode-toggle" class="primary">Switch to decrypt</button>
+        </div>
+      </section>
+
+      <div class="io-grid">
+        <div id="io-in" class="io-block plain">
+          <div id="io-in-label" class="label">Plaintext</div>
+          <div id="io-in-val" class="value"></div>
+        </div>
+        <div id="io-out" class="io-block cipher">
+          <div id="io-out-label" class="label">Ciphertext</div>
+          <div id="io-out-val" class="value"></div>
+        </div>
+      </div>
+
+      <h2>Key schedule — two round keys from one key</h2>
+      <p class="subtitle">
+        Before any encryption happens, the 10-bit key is stretched into two
+        8-bit round keys: shuffle with P10, split into halves, rotate, and
+        compress with P8. Both round keys are fixed the moment the key is
+        chosen.
+      </p>
+      <section id="ks-stages" class="panel"></section>
+
+      <h2 id="pipe-title">Encryption — through the pipeline</h2>
+      <p id="pipe-sub" class="subtitle"></p>
+      <div id="pipe-stages" class="sd-pipeline"></div>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          S-DES was designed by Edward Schaefer at Santa Clara University in
+          1996 as a teaching version of the Data Encryption Standard
+          (FIPS&nbsp;46, 1977). It keeps every structural feature of the real
+          cipher — an initial permutation, Feistel rounds built from
+          expansion, key mixing, S-box substitution and a permutation, a swap
+          between rounds, and a final inverse permutation — but shrinks the
+          numbers so a single encryption can be worked through by hand: 8-bit
+          blocks, a 10-bit key, two rounds, two S-boxes.
+        </p>
+        <p>
+          The S-boxes are the heart of the cipher. Every other step — P10,
+          P8, IP, E/P, P4 — just moves bits around or XORs them, and those
+          are linear operations. The S-box lookup is the only place where the
+          output is not a simple rearrangement of the input, and that
+          non-linearity is what the whole construction depends on.
+        </p>
+        <p>
+          The Feistel structure is what makes decryption work. A round only
+          ever modifies the left half, by XORing it with a function of the
+          right half and the round key; the right half passes through
+          untouched. XOR undoes itself, so running the same machinery with
+          the round keys in the opposite order — K₂ first, then K₁ — peels
+          the rounds off in reverse. Hit <em>switch to decrypt</em> above and
+          the pipeline carries your ciphertext back to the plaintext through
+          exactly the same diagram.
+        </p>
+        <p style="margin-bottom: 0;">
+          Real DES scales the same skeleton up: 64-bit blocks, a 56-bit key,
+          sixteen rounds, and eight larger S-boxes that map six bits to four.
+          The lookup rule is the same one used here — outer bits pick the
+          row, inner bits pick the column.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+    <script type="module" src="/src/sdes.js"></script>
+  </body>
+</html>
