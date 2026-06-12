@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/cryptography/favicon.png" />
+    <title>Weak PRNG · Cryptography Visualisations</title>
+    <script type="module" crossorigin src="/cryptography/assets/prngAbuse-Ce_6kbGH.js"></script>
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/nav-KW5QDYV8.js">
+    <link rel="modulepreload" crossorigin href="/cryptography/assets/rc4-BYMAJWXl.js">
+    <link rel="stylesheet" crossorigin href="/cryptography/assets/nav-BvLY1ALN.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <h1>Cryptography Visualisations</h1>
+        <nav>
+          <a href="../">Home</a>
+          <details class="nav-group">
+            <summary>Caesar</summary>
+            <div class="nav-menu">
+              <a href="./caesar.html">Cipher</a>
+              <a href="./caesar-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vigenère</summary>
+            <div class="nav-menu">
+              <a href="./vigenere.html">Cipher</a>
+              <a href="./vigenere-crack.html">Cracker</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Vernam</summary>
+            <div class="nav-menu">
+              <a href="./vernam.html">Cipher</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Symmetric Encryption</summary>
+            <div class="nav-menu">
+              <a href="./sdes.html">S-DES</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Attacks</summary>
+            <div class="nav-menu">
+              <a href="./crib-drag.html">Crib Drag</a>
+              <a href="./wep.html">WEP</a>
+              <a href="./prng-abuse.html">Weak PRNG</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Bits</summary>
+            <div class="nav-menu">
+              <a href="./binary.html">Binary</a>
+              <a href="./bitwise-and.html">AND</a>
+              <a href="./bitwise-or.html">OR</a>
+              <a href="./bitwise-not.html">NOT</a>
+              <a href="./bitwise-xor.html">XOR</a>
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>Tools</summary>
+            <div class="nav-menu">
+              <a href="./chi-squared.html">Chi-squared</a>
+            </div>
+          </details>
+          <a class="yt-badge" href="https://www.youtube.com/channel/UCKWTNfBKMVPzy5JgEhC6Ghg" target="_blank" rel="noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/>
+              <path d="M9.6 15.6 15.8 12 9.6 8.4z" fill="#0d1117"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Weak PRNG: The Netscape SSL Bug (1994)</h1>
+      <p class="subtitle">
+        A strong cipher is worthless if the key is generated poorly.
+        Netscape Navigator seeded its SSL PRNG with <code>time&nbsp;^&nbsp;PID</code>.
+        Both values are observable or guessable by an attacker — collapsing a
+        notional 2¹²⁸ key space to fewer than a million candidates, crackable
+        in seconds.
+      </p>
+
+      <section class="panel">
+        <h3 style="margin: 0 0 0.75rem; color: var(--c-heading); font-size: 1rem;">The weak seed</h3>
+        <div class="seed-diagram">
+          <div class="seed-component sc-time">
+            <div class="sc-label">Unix timestamp</div>
+            <div class="sc-value" id="scenario-time"></div>
+            <div class="sc-note">Network packet timestamp reveals this ± 60 s</div>
+          </div>
+          <div class="seed-op">XOR (^)</div>
+          <div class="seed-component sc-pid">
+            <div class="sc-label">Process ID (PID)</div>
+            <div class="sc-value" id="scenario-pid">???</div>
+            <div class="sc-note">1994-era Unix: sequential, typically &lt; 1 024</div>
+          </div>
+          <div class="seed-op">=</div>
+          <div class="seed-component sc-seed">
+            <div class="sc-label">Seed →</div>
+            <div class="sc-value">LCG PRNG</div>
+            <div class="sc-note">produces the "random" session key bytes</div>
+          </div>
+        </div>
+      </section>
+
+      <h2>Intercepted SSL handshake</h2>
+      <p class="subtitle">
+        The attacker captures the encrypted SSL CLIENT_HELLO challenge over the
+        wire. The challenge's plaintext structure is fixed by the protocol —
+        <span id="key-len"></span> zero bytes — giving a known-plaintext pair.
+      </p>
+      <div class="intercept-grid">
+        <div class="intercept-box plain">
+          <div class="intercept-label">Known plaintext (CLIENT_HELLO challenge)</div>
+          <div id="known-plain-hex" class="hex-display plain-hex-display"></div>
+        </div>
+        <div class="intercept-box cipher">
+          <div class="intercept-label">Intercepted ciphertext</div>
+          <div id="intercepted-hex" class="hex-display"></div>
+        </div>
+      </div>
+
+      <h2>Brute-force the seed</h2>
+      <p class="subtitle">
+        Try every combination of timestamp ± 60 s and PID 1–1 024. For each
+        candidate seed, generate the key, decrypt the challenge, and check
+        whether the result is all-zero. Real hardware in 1994 needed minutes;
+        the browser finishes in milliseconds.
+      </p>
+      <div class="panel">
+        <div class="search-space-row">
+          <div class="ss-box">
+            <div class="ss-label">Search space</div>
+            <div class="ss-value" id="search-space"></div>
+            <div class="ss-note">time window × PID range</div>
+          </div>
+          <div class="ss-box">
+            <div class="ss-label">Effective entropy</div>
+            <div class="ss-value"><span id="brute-bits"></span> bits</div>
+            <div class="ss-note">vs 128 bits for a proper key</div>
+          </div>
+          <div class="ss-box">
+            <div class="ss-label">Attempts so far</div>
+            <div class="ss-value" id="crack-attempts">0</div>
+          </div>
+          <div class="ss-box">
+            <div class="ss-label">Speed</div>
+            <div class="ss-value" id="crack-speed">–</div>
+          </div>
+        </div>
+
+        <div class="entropy-wrap" style="margin: 1rem 0 0.4rem;">
+          <div class="entropy-track">
+            <div id="crack-progress" class="entropy-bar" style="background: var(--c-warn);"></div>
+          </div>
+        </div>
+
+        <div class="control-row" style="margin-top: 1rem; gap: 0.6rem; flex-wrap: wrap;">
+          <button id="crack-btn" class="primary">Crack it</button>
+          <button id="new-scenario-btn">New scenario</button>
+        </div>
+      </div>
+
+      <div id="crack-result" class="panel crack-found" hidden>
+        <h3 style="margin: 0 0 0.75rem; color: var(--c-plain);">Seed recovered!</h3>
+        <div class="found-grid">
+          <div class="found-row">
+            <span class="found-label">Seed (time ^ PID)</span>
+            <code id="found-seed" class="found-val key-val"></code>
+          </div>
+          <div class="found-row">
+            <span class="found-label">Time</span>
+            <code id="found-time" class="found-val"></code>
+          </div>
+          <div class="found-row">
+            <span class="found-label">PID (was hidden)</span>
+            <code id="found-pid" class="found-val plain-val"></code>
+          </div>
+          <div class="found-row">
+            <span class="found-label">Recovered key (hex)</span>
+            <code id="found-key" class="found-val cipher-val small-mono"></code>
+          </div>
+          <div class="found-row">
+            <span class="found-label">Time to crack</span>
+            <code id="found-elapsed" class="found-val"></code>
+          </div>
+        </div>
+      </div>
+
+      <h2>How it works</h2>
+      <div class="panel">
+        <p>
+          In 1994, Ian Goldberg and David Wagner audited Netscape Navigator's
+          SSL 2.0 implementation. The PRNG was seeded with a combination of the
+          current time (seconds), the browser's process ID, and the parent
+          process ID — all observable or easily guessed by any local process
+          or network adversary with an approximate connection timestamp.
+        </p>
+        <p>
+          The SSL CLIENT_HELLO challenge is a fixed-format structure whose
+          plaintext content is known to both parties and therefore to an
+          eavesdropper. With a known plaintext and a tiny seed space, the
+          attacker simply iterates every plausible seed, regenerates the key,
+          and checks whether decryption succeeds. On 1994 hardware this took
+          about a minute; on modern hardware it takes microseconds.
+        </p>
+        <p>
+          This simulation uses an LCG (the glibc <code>rand()</code>
+          parameters) to model the weak PRNG and RC4 to model the stream
+          cipher, matching the conceptual structure of the Netscape flaw.
+        </p>
+        <p style="color: var(--c-dim); margin-bottom: 0;">
+          The lesson is not specific to Netscape: <strong>a cryptographically
+          secure PRNG (CSPRNG) is mandatory for key generation</strong>. An
+          LCG seeded with observable system values is not random — it is a
+          public function of public inputs, dressed up in complexity.
+          Modern APIs (<code>crypto.getRandomValues</code>,
+          <code>/dev/urandom</code>) exist precisely to avoid this mistake.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Built with Vite · © Kyri &amp; Cou Ltd
+    </footer>
+
+  </body>
+</html>
